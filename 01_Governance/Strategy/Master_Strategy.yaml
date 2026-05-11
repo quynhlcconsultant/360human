@@ -1,0 +1,295 @@
+# Master Strategy — 360Human
+# SSOT Layer 1: Chiến lược cốt lõi — mọi agent đọc file này khi cần định hướng
+# Source: CEO-001, CEO-002, CEO-004, CEO-005
+# Last updated: 2026-03-20
+# Owner: @CEO-Winston
+
+id: MASTER_STRATEGY_V1
+version: "1.0"
+status: active
+last_updated: "2026-03-20"
+
+# ─────────────────────────────────────────
+# 1. IDENTITY
+# ─────────────────────────────────────────
+identity:
+  product_name: "360Human"
+  domain: "360human.vn"
+  tagline: "Hiểu bản đồ vũ trụ toàn diện để bạn đưa ra quyết định chính xác nhất"
+  vision: "Giúp khai mở bản thân — Hiểu bản đồ vũ trụ toàn diện"
+  commitment: "Accuracy luôn là ưu tiên hàng đầu — Specific vào bản đồ của riêng bạn — Kế hoạch hành động"
+
+# ─────────────────────────────────────────
+# 2. NORTH STAR
+# ─────────────────────────────────────────
+north_star:
+  launch_date: "2026-04-29"
+  days_remaining: 40  # as of 2026-03-20
+  primary_kpi: "99% accuracy at scale"
+  milestone_accuracy:
+    pre_pilot: "70%"
+    pilot: ">85%"
+    scale: "99%"
+
+# ─────────────────────────────────────────
+# 3. TARGET AUDIENCE (ICP)
+# ─────────────────────────────────────────
+target_audience:
+  primary:
+    segment: "Young / Digital-savvy"
+    age_range: "18–28"
+    profile: "Gen Z đang đối mặt với khủng hoảng hiện sinh, tìm kiếm self-discovery"
+    platform: "Mobile-first, social media heavy"
+    geography: "Urban Vietnam (Hà Nội, TP.HCM)"
+  secondary:
+    segment: "Millennials"
+    profile: "Phụ nữ nhạy cảm, tìm kiếm định hướng cuộc đời"
+  expansion:
+    - "Baby Boomers (hướng dẫn con cái)"
+    - "Asia market"
+    - "Global"
+
+# ─────────────────────────────────────────
+# 4. BUSINESS MODEL
+# ─────────────────────────────────────────
+business_model:
+  current: "Freemium Web-tool"
+  tiers:
+    free:
+      name: "Free"
+      access: "Basic readings — 1 framework, limited topics"
+      goal: "Acquisition & activation"
+    paid:
+      name: "Paid"
+      access: "Full readings — 5 frameworks, all topics"
+      goal: "Revenue"
+    premium:
+      name: "Premium"
+      access: "PDF export, personalized action plan, priority AI"
+      goal: "High LTV"
+  roadmap:
+    phase_1: "Freemium Web-tool (launch 29/04/2026)"
+    phase_2: "AppStore (cần investment)"
+    phase_3: "Marketplace (kết nối Tarot readers toàn cầu)"
+  payment:
+    provider: "VietQR"
+    currency: "VND"
+
+# ─────────────────────────────────────────
+# 5. PRODUCT CORE
+# ─────────────────────────────────────────
+product:
+  frameworks:
+    - id: F1
+      name: "Tử Vi"
+      type: "Vietnamese Astrology"
+      notes: "Cần adapt repo cho thị trường Vietnam (âm lịch)"
+    - id: F2
+      name: "Tứ Trụ (Bát Tự)"
+      type: "Chinese BaZi"
+    - id: F3
+      name: "Nhân Số Học"
+      type: "Numerology (Pythagorean)"
+      notes: "Cần adapt cho tên Việt"
+    - id: F4
+      name: "Tarot"
+      type: "Western Tarot"
+      notes: "Self-discovery context — KHÔNG fortune-telling thuần túy"
+    - id: F5
+      name: "Bát Tự / I Ching"
+      type: "I Ching Elements"
+
+  depth:
+    topics_per_framework: 10
+    lenses_per_topic: 4
+    total_combinations: 200  # 5 × 10 × 4
+
+  reason_to_believe:
+    - "5 frameworks (toàn vẹn và chính xác)"
+    - "2000+ research papers (nền tảng chuyên gia)"
+    - "10 chủ đề × 4 lăng kính (phân tích chuyên sâu)"
+
+  key_screens:
+    - "Onboarding / Birth data input"
+    - "Vũ Trụ — Bản thể con người (overview)"
+    - "Vì Sao — 5 hệ thống (framework selector)"
+    - "Bản Đồ Cuộc Đời — Universal Blueprint"
+    - "Wheels — Cách bạn lăn bánh (action plan)"
+    - "Profile & Settings"
+    - "Paywall / Upgrade"
+    - "PDF Export (Premium)"
+    - "Dashboard"
+    - "Onboarding flow"
+
+  ui_reference: "Co-Star app (philosophy) — minimalist, dark, premium"
+  ui_theme: "Cosmic Paper — kết hợp texture giấy Á Đông + yếu tố vũ trụ"
+
+# ─────────────────────────────────────────
+# 6. TECH STACK
+# ─────────────────────────────────────────
+tech_stack:
+  backend:
+    language: "Python 3.11"
+    framework: "FastAPI"
+    orm: "SQLAlchemy (async) + Alembic"
+    database: "PostgreSQL (Neon serverless)"
+    auth: "JWT (python-jose) + bcrypt (passlib)"
+    ai_sdk: "anthropic"
+    ai_model: "claude-sonnet-4-6"
+    astrology_api: "astrology-api.io"
+    deploy: "Railway"
+  frontend:
+    framework: "Next.js 14 App Router"
+    language: "TypeScript (strict)"
+    styling: "Tailwind CSS"
+    ui_components: "shadcn/ui + Radix UI"
+    state: "Zustand (global) + useState (local)"
+    data_fetching: "TanStack Query v5"
+    auth: "NextAuth.js"
+    deploy: "Vercel"
+  infrastructure:
+    database_host: "Neon (serverless PostgreSQL)"
+    backend_host: "Railway"
+    frontend_host: "Vercel"
+    ci_cd: "GitHub Actions"
+    containerization: "Docker + docker-compose (local dev)"
+
+# ─────────────────────────────────────────
+# 7. SUCCESS METRICS
+# ─────────────────────────────────────────
+success_metrics:
+  weights:
+    accuracy: "60%"
+    specificity: "20%"
+    performance: "5%"
+    ui_quality: "5%"
+    ci_cd_reliability: "10%"
+
+  performance_targets:
+    api_response_time: "<2s (general), <5s (AI chart generation)"
+    core_web_vitals_lcp: "<2.5s"
+    uptime: ">99.5%"
+
+  accuracy_checkpoints:
+    pre_pilot: "70% — internal review vs expert"
+    pilot: ">85% — user feedback + expert validation"
+    scale: "99% — automated + manual audit"
+
+# ─────────────────────────────────────────
+# 8. COMPETITIVE POSITIONING
+# ─────────────────────────────────────────
+competitive_positioning:
+  blue_ocean: true
+  differentiators:
+    - "5 frameworks tích hợp (không phải single-framework)"
+    - "AI-powered personalization (không generic)"
+    - "Scientific foundation (2000+ research papers)"
+    - "Vietnam market adapted (âm lịch, tên Việt)"
+    - "Premium UX (Co-Star level — không kitschy)"
+
+  competitor_weaknesses:
+    global:
+      - "Fragmented approach (split Western/Eastern)"
+      - "Low Vietnam market awareness"
+    vietnam:
+      - "Thiếu professionalism"
+      - "Gắn với mê tín"
+      - "Thiếu nền tảng khoa học"
+      - "AI Generic (không personalized)"
+      - "Single framework (Tử Vi focused)"
+
+# ─────────────────────────────────────────
+# 9. SPRINT ROADMAP
+# ─────────────────────────────────────────
+sprint_roadmap:
+  - id: S01
+    name: "Module 1 Training"
+    dates: "2026-03-15 → 2026-03-20"
+    status: done
+    deliverables: ["DDWA analysis", "AGENT STAR analysis"]
+
+  - id: S02
+    name: "Tái Cấu Trúc Tổ Chức"
+    dates: "2026-03-20 → 2026-03-20"
+    status: done
+    deliverables:
+      - "DDWA folder structure"
+      - "Handoff Suite (9 items)"
+      - "13 Agent JD.md"
+      - "12 Workflows (T0→T3)"
+      - "Global Rules + Quality Gates"
+      - "Master_Strategy.yaml"
+
+  - id: S03
+    name: "Foundation (Sprint 0 Tech)"
+    dates: "2026-03-21 → 2026-03-27"
+    status: pending
+    goal: "docker-compose up + auth working + frontend scaffold"
+    deliverables:
+      - "Docker + PostgreSQL setup"
+      - "Alembic migrations (User, Profile, Subscription)"
+      - "Auth API (JWT register/login/refresh)"
+      - "Next.js 15 App Router scaffold"
+    gate: "docker-compose up OK + alembic upgrade head OK + auth endpoints OK"
+
+  - id: S04
+    name: "Core Flow (Sprint 1 Tech)"
+    dates: "2026-03-28 → 2026-04-10"
+    status: pending
+    deliverables:
+      - "User profile + birth data form"
+      - "L3 AI Pipeline (chart generation)"
+      - "Astrology Knowledge Base (KI-003→KI-010)"
+      - "Dashboard screen"
+
+  - id: S05
+    name: "Monetization (Sprint 2 Tech)"
+    dates: "2026-04-11 → 2026-04-20"
+    status: pending
+    deliverables:
+      - "VietQR payment integration"
+      - "Tier unlock logic"
+      - "Pricing UI + Paywall"
+
+  - id: S06
+    name: "Polish & Launch (Sprint 3 Tech)"
+    dates: "2026-04-21 → 2026-04-29"
+    status: pending
+    deliverables:
+      - "PDF export"
+      - "SEO setup"
+      - "Production deploy (Railway + Vercel)"
+      - "Monitoring (Sentry + Grafana)"
+      - "Launch campaign"
+
+# ─────────────────────────────────────────
+# 10. ROUTE TO MARKET
+# ─────────────────────────────────────────
+route_to_market:
+  channels:
+    - "TikTok (primary — Gen Z Vietnam)"
+    - "Instagram (secondary)"
+    - "Facebook (Millennial segment)"
+    - "SEO (organic, long-term)"
+  tactics:
+    - "Nano/Atomic Influencer collaboration"
+    - "Digital Marketing for awareness"
+    - "Customization for segmentation via CS"
+  beta_strategy:
+    timeline: "2026-04-14 → 2026-04-28"
+    target: "50–100 beta users (friends + micro-community)"
+
+# ─────────────────────────────────────────
+# 11. OPERATING PRINCIPLES (from global-rules.md)
+# ─────────────────────────────────────────
+operating_principles:
+  - name: "Think-Out-Loud (TOL)"
+    rule: "Mọi agent ghi lại reasoning trước khi output"
+  - name: "Sprint-Centric"
+    rule: "Mọi task thuộc 1 sprint. Không làm orphan task"
+  - name: "Changelog"
+    rule: "Mọi thay đổi cấu trúc log vào Changelog.md"
+  - name: "SSOT"
+    rule: "Mỗi thông tin chỉ tồn tại ở 1 nơi. Còn lại là backlink"
+  - name: "Indexing"
+    rule: "Mọi file mới thêm vào INDEX.md tương ứng"

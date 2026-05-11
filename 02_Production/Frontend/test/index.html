@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>360Human — Prototype v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F7F3ED;
+  --warm-white: #FFFDF9;
+  --sand: #EDE6DA;
+  --ink: #1C1917;
+  --charcoal: #44403C;
+  --stone: #78716C;
+  --border: #E7E0D6;
+  --gold: #B8860B;
+  --gold-soft: #D4A843;
+  --gold-bg: #F5ECD4;
+  --sage: #6B8F71;
+  --sage-bg: #DCE8DD;
+  --ember: #B85C38;
+  --ember-bg: #F2DDD3;
+  --success: #2D6A4F;
+  --success-bg: #D8F3DC;
+  --error: #C53030;
+  --error-bg: #FEE2E2;
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-reading: "Lora", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-body); background: var(--cream); color: var(--ink); font-size: 16px; line-height: 1.7; min-height: 100vh; padding-bottom: 44px; }
+.screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+.screen.active { display: block; }
+.btn { display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-body); font-weight: 500; font-size: 15px; border: none; border-radius: var(--radius-md); cursor: pointer; padding: 12px 24px; transition: all 0.15s ease; }
+.btn-gold { background: var(--gold); color: var(--warm-white); }
+.btn-gold:hover { background: var(--gold-soft); }
+.btn-ghost { background: transparent; color: var(--charcoal); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--sand); }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-lg { padding: 16px 32px; font-size: 16px; }
+.btn-full { width: 100%; }
+.btn-destructive { background: transparent; color: var(--error); border: 1px solid var(--error); }
+.btn-success { background: var(--success); color: #fff; }
+.card { background: var(--warm-white); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 24px; }
+.badge { display: inline-flex; padding: 4px 12px; font-size: 12px; font-weight: 600; border-radius: var(--radius-full); border: 1px solid; }
+.badge-free { background: var(--sand); color: var(--charcoal); border-color: var(--border); }
+.badge-pro  { background: var(--sage-bg); color: var(--sage); border-color: var(--sage); }
+.badge-system { background: var(--sand); color: var(--stone); border-color: var(--border); font-family: var(--font-mono); font-size: 11px; font-weight: 400; }
+.tier-gate { position: absolute; inset: 0; backdrop-filter: blur(4px); background: rgba(255,255,255,0.75); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border-radius: var(--radius-lg); }
+h1 { font-family: var(--font-heading); font-size: 40px; font-weight: 700; line-height: 1.2; }
+h2 { font-family: var(--font-heading); font-size: 24px; font-weight: 600; line-height: 1.4; }
+h3 { font-family: var(--font-heading); font-size: 20px; font-weight: 500; line-height: 1.5; }
+h4 { font-family: var(--font-body); font-size: 16px; font-weight: 600; line-height: 1.7; }
+.source { font-family: var(--font-mono); font-size: 13px; color: var(--stone); opacity: 0.8; }
+.reading-text { font-family: var(--font-reading); font-size: 18px; line-height: 1.8; max-width: 680px; }
+.muted { color: var(--stone); }
+.container { max-width: 1280px; margin: 0 auto; padding: 0 48px; }
+.container-sm { max-width: 480px; margin: 0 auto; padding: 0 20px; }
+.container-md { max-width: 960px; margin: 0 auto; padding: 0 48px; }
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 12px 16px; font-family: var(--font-body); font-size: 15px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--warm-white); color: var(--ink); outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(184,134,11,0.12); }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--charcoal); }
+.separator { display: flex; align-items: center; gap: 16px; margin: 24px 0; color: var(--stone); font-size: 13px; }
+.separator::before, .separator::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.progress-bar { height: 4px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+.progress-bar .fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.3s ease; }
+.accordion-item { border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 8px; background: var(--warm-white); overflow: hidden; }
+.accordion-header { padding: 16px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-heading); font-size: 18px; font-weight: 500; }
+.accordion-header:hover { background: var(--sand); }
+.accordion-header .arrow { transition: transform 0.2s; font-size: 14px; color: var(--stone); }
+.accordion-item.open .accordion-header .arrow { transform: rotate(180deg); }
+.accordion-body { padding: 0 24px 24px; display: none; }
+.accordion-item.open .accordion-body { display: block; }
+.accordion-item.locked .accordion-header:hover { background: var(--gold-bg); }
+.tabs { display: flex; border-bottom: 1px solid var(--border); gap: 0; overflow-x: auto; }
+.tab { padding: 12px 24px; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--stone); border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+.tab:hover { color: var(--charcoal); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; border-bottom: 1px solid var(--border); background: var(--warm-white); position: sticky; top: 0; z-index: 100; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.app-layout { display: flex; min-height: 100vh; }
+.sidebar { width: 240px; background: var(--warm-white); border-right: 1px solid var(--border); padding: 24px 0; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.sidebar-logo { padding: 0 24px 24px; font-family: var(--font-heading); font-size: 20px; font-weight: 600; }
+.sidebar-nav { list-style: none; }
+.sidebar-nav li { padding: 10px 24px; cursor: pointer; font-size: 15px; color: var(--charcoal); display: flex; align-items: center; gap: 10px; transition: all 0.1s; }
+.sidebar-nav li:hover { background: var(--sand); }
+.sidebar-nav li.active { color: var(--gold); background: var(--gold-bg); font-weight: 500; }
+.sidebar-divider { height: 1px; background: var(--border); margin: 12px 24px; }
+.app-main { flex: 1; overflow-y: auto; }
+.dev-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; background: var(--ink); display: flex; gap: 4px; padding: 8px 12px; align-items: center; justify-content: flex-end; }
+.dev-nav .tier-toggle { padding: 5px 12px; font-size: 11px; border-radius: 4px; cursor: pointer; border: none; white-space: nowrap; font-family: var(--font-mono); }
+.dev-nav .tier-toggle.free { background: var(--sand); color: var(--ink); }
+.dev-nav .tier-toggle.pro { background: var(--gold-soft); color: white; }
+@keyframes copulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.4); } }
+.co-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+.co-modal-overlay.open { display: flex; }
+.co-modal { background: var(--cream); border-radius: var(--radius-lg); max-width: 480px; width: 100%; padding: 32px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,0.35); }
+.co-method-btn { background: var(--warm-white); border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; display: flex; align-items: center; gap: 16px; width: 100%; text-align: left; transition: border-color 0.15s, background 0.15s; }
+.co-method-btn:hover { border-color: var(--gold); background: var(--gold-bg); }
+.co-icon { width: 44px; height: 44px; background: var(--sand); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+@keyframes cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.qa-cursor { display: inline-block; width: 2px; height: 18px; background: var(--gold); animation: cursor-blink 0.8s infinite; vertical-align: text-bottom; margin-left: 2px; }
+.qa-response { font-family: var(--font-reading); font-size: 16px; line-height: 1.8; padding: 16px; background: var(--sand); border-radius: var(--radius-md); margin-top: 12px; min-height: 60px; }
+.qa-loading { display: flex; gap: 6px; align-items: center; padding: 16px; }
+.qa-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--stone); animation: copulse 1.2s infinite; }
+.qa-dot:nth-child(2) { animation-delay: 0.3s; }
+.qa-dot:nth-child(3) { animation-delay: 0.6s; }
+.mob-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
+.mob-overlay.open { display: block; }
+.mob-sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 280px; background: var(--warm-white); z-index: 1001; padding: 24px 0; transform: translateX(-100%); transition: transform 0.25s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+.mob-sidebar.open { transform: translateX(0); }
+.mob-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--stone); }
+.hamburger { display: none; background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 10px; cursor: pointer; font-size: 18px; color: var(--charcoal); }
+.password-form { display: none; margin-top: 16px; }
+.password-form.open { display: block; }
+@keyframes slide-down { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.pro-banner { animation: slide-down 0.3s ease; }
+.sys-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sys-table th { background: var(--sand); padding: 8px 10px; text-align: left; font-weight: 600; color: var(--charcoal); border-bottom: 1px solid var(--border); }
+.sys-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.sys-table tr:last-child td { border-bottom: none; }
+.sys-table tr:hover td { background: var(--cream); }
+.palace-grid { display: grid; grid-template-columns: repeat(4,1fr); grid-template-rows: repeat(4,1fr); gap: 2px; background: var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.palace { background: var(--warm-white); padding: 8px; font-size: 11px; cursor: pointer; min-height: 72px; }
+.palace:hover { background: var(--gold-bg); }
+.palace.menh { background: var(--gold-bg); border: 2px solid var(--gold); }
+.palace-name { font-weight: 600; font-size: 10px; color: var(--stone); display: block; margin-bottom: 2px; }
+.palace-stars { font-size: 10px; color: var(--charcoal); line-height: 1.5; }
+.palace-center { background: var(--sand); display: flex; align-items: center; justify-content: center; text-align: center; padding: 12px; }
+.hd-center { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 4px; }
+.hd-center.defined { background: var(--ink); color: var(--warm-white); }
+.hd-center.undefined { background: var(--sand); color: var(--stone); border: 1px solid var(--border); }
+.hd-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.hd-center.defined .hd-dot { background: var(--gold-soft); }
+.hd-center.undefined .hd-dot { background: var(--border); }
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .container-md { padding: 0 20px; }
+  .topbar { padding: 12px 20px; }
+  .sidebar { display: none; }
+  .hamburger { display: flex; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 18px; }
+  .two-col, .three-col { flex-direction: column !important; }
+  .app-main { padding-bottom: 48px; }
+  .app-main > div[style*="display:flex"] { flex-direction: column; }
+  .co-modal { padding: 20px; }
+  .dev-nav { padding: 6px 8px; justify-content: center; }
+  /* Tables: horizontal scroll */
+  .sys-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .sys-table-wide { min-width: 460px; }
+  /* Palace grid: smaller cells */
+  .palace { min-height: 56px; padding: 5px; }
+  .palace-name { font-size: 9px; }
+  .palace-stars { font-size: 9px; }
+  /* Pricing cards: full width */
+  #s7 .card { min-width: unset !important; max-width: 100% !important; }
+  /* S5 chart panels: stack */
+  #s5 .tab-panel > div[style*="display:flex"],
+  #s6 > div > div > div[style*="display:flex"] { flex-direction: column; }
+  /* Reading text size */
+  .reading-text { font-size: 16px; }
+  /* Topbar items */
+  .topbar-right .btn-sm { font-size: 12px; padding: 6px 10px; }
+  /* Calendar table */
+  .cal-day { padding: 8px 4px !important; font-size: 13px; }
+  /* HD centers grid */
+  .hd-center { font-size: 12px; }
+  /* Onboarding */
+  #s3 .container-sm { padding: 0 16px; }
+  /* S9 layout */
+  #s9 div[style*="padding:32px 48px"] { padding: 20px !important; }
+}
+@media (max-width: 480px) {
+  .card { padding: 16px; }
+  .btn-lg { padding: 14px 20px; font-size: 15px; }
+  .reading-text { font-size: 15px; }
+  .accordion-header { font-size: 15px; padding: 14px 16px; }
+  .accordion-body { padding: 0 16px 16px; }
+  .palace-grid { font-size: 10px; }
+  .palace { min-height: 48px; padding: 4px; }
+  h1 { font-size: 24px; }
+  .topbar { gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- S1 LANDING -->
+<div id="s1" class="screen active">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:16px 48px;position:absolute;top:0;left:0;right:0;z-index:10;background:rgba(247,243,237,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);">
+    <div style="font-family:var(--font-heading);font-size:20px;font-weight:600;">360Human</div>
+    <div style="display:flex;gap:12px;">
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('s2');switchTab2('login')">Đăng nhập</button>
+      <button class="btn btn-gold btn-sm" onclick="showScreen('s2');switchTab2('register')">Đăng ký miễn phí</button>
+    </div>
+  </header>
+  <section style="min-height:90vh;display:flex;align-items:center;padding:120px 48px 64px;">
+    <div style="max-width:1280px;margin:0 auto;display:flex;gap:64px;align-items:center;width:100%;" class="two-col">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 320 320" style="width:100%;max-width:320px;">
+          <circle cx="160" cy="160" r="140" fill="none" stroke="var(--border)" stroke-width="1"/>
+          <circle cx="160" cy="160" r="100" fill="none" stroke="var(--sand)" stroke-width="1"/>
+          <circle cx="160" cy="160" r="60" fill="var(--sand)" stroke="var(--border)" stroke-width="1"/>
+          <circle cx="160" cy="160" r="20" fill="var(--ink)"/>
+          <circle cx="160" cy="20" r="10" fill="var(--ink)"/>
+          <circle cx="294" cy="105" r="10" fill="var(--gold-bg)" stroke="var(--gold)" stroke-width="2"/>
+          <circle cx="247" cy="275" r="10" fill="var(--gold-bg)" stroke="var(--gold)" stroke-width="2"/>
+          <circle cx="73" cy="275" r="10" fill="var(--gold-bg)" stroke="var(--gold)" stroke-width="2"/>
+          <circle cx="26" cy="105" r="10" fill="var(--gold-bg)" stroke="var(--gold)" stroke-width="2"/>
+          <line x1="160" y1="30" x2="160" y2="140" stroke="var(--ink)" stroke-width="1.5"/>
+          <line x1="285" y1="112" x2="215" y2="152" stroke="var(--ink)" stroke-width="1.5"/>
+          <line x1="240" y1="267" x2="196" y2="212" stroke="var(--ink)" stroke-width="1.5"/>
+          <line x1="80" y1="267" x2="124" y2="212" stroke="var(--ink)" stroke-width="1.5"/>
+          <line x1="35" y1="112" x2="105" y2="152" stroke="var(--ink)" stroke-width="1.5"/>
+          <text x="160" y="12" text-anchor="middle" style="font-size:11px;fill:var(--stone);font-family:sans-serif;">Tử Vi</text>
+          <text x="310" y="102" style="font-size:11px;fill:var(--stone);font-family:sans-serif;">BaZi</text>
+          <text x="248" y="295" text-anchor="middle" style="font-size:11px;fill:var(--stone);font-family:sans-serif;">HD</text>
+          <text x="72" y="295" text-anchor="end" style="font-size:11px;fill:var(--stone);font-family:sans-serif;">Số học</text>
+          <text x="8" y="102" style="font-size:11px;fill:var(--stone);font-family:sans-serif;">Vedic</text>
+        </svg>
+      </div>
+      <div style="flex:1;">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:var(--sand);padding:6px 16px;border-radius:var(--radius-full);margin-bottom:20px;">
+          <span style="font-size:12px;font-family:var(--font-mono);color:var(--stone);">5 hệ thống x 10 chủ đề x 4 lăng kính</span>
+        </div>
+        <h1 style="margin-bottom:16px;">Hiểu mình sâu hơn,<br>sống đúng hơn</h1>
+        <p style="font-size:18px;color:var(--charcoal);margin-bottom:32px;max-width:480px;line-height:1.8;">Phân tích 360° từ Tử Vi, BaZi, Human Design, Số học và Vedic. Một bức tranh toàn diện — không phải tử vi chung chung.</p>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-gold btn-lg" onclick="showScreen('s2')">Khám phá bản thân</button>
+          <a href="#how" style="color:var(--stone);font-size:15px;">Tìm hiểu thêm ↓</a>
+        </div>
+        <p style="font-size:13px;color:var(--stone);margin-top:16px;">✓ Miễn phí · Không cần thẻ</p>
+      </div>
+    </div>
+  </section>
+  <section style="padding:64px 48px;background:var(--sand);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div style="display:flex;gap:24px;" class="three-col">
+        <div class="card" style="flex:1;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">⬡</div><h3>5 hệ thống</h3><p class="muted" style="font-size:15px;margin-top:8px;">Tử Vi, BaZi, Human Design, Số học, Vedic — cross-referenced và đối chiếu</p></div>
+        <div class="card" style="flex:1;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">◇</div><h3>20.000+ trang tài liệu</h3><p class="muted" style="font-size:15px;margin-top:8px;">Knowledge base nghiên cứu chuyên sâu, không phải copy-paste</p></div>
+        <div class="card" style="flex:1;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">○</div><h3>Cá nhân hóa</h3><p class="muted" style="font-size:15px;margin-top:8px;">Mọi thứ tính từ dữ liệu sinh của bạn. Không có hai người giống nhau.</p></div>
+      </div>
+    </div>
+  </section>
+  <section id="how" style="padding:96px 48px;">
+    <div style="max-width:960px;margin:0 auto;text-align:center;">
+      <h2 style="margin-bottom:8px;">Chỉ 4 bước để hiểu mình</h2>
+      <p class="muted" style="margin-bottom:48px;">Từ thông tin sinh đến bản đồ cá nhân hoàn chỉnh</p>
+      <div style="display:flex;gap:32px;" class="three-col">
+        <div style="flex:1;"><div style="font-family:var(--font-heading);font-size:48px;color:var(--gold);margin-bottom:8px;opacity:0.4;">1</div><h4>Nhập thông tin</h4><p class="muted" style="font-size:14px;">Họ tên, ngày giờ, nơi sinh</p></div>
+        <div style="flex:1;"><div style="font-family:var(--font-heading);font-size:48px;color:var(--gold);margin-bottom:8px;opacity:0.4;">2</div><h4>Phân tích 360°</h4><p class="muted" style="font-size:14px;">5 hệ thống tính toán song song</p></div>
+        <div style="flex:1;"><div style="font-family:var(--font-heading);font-size:48px;color:var(--gold);margin-bottom:8px;opacity:0.4;">3</div><h4>Đọc chi tiết</h4><p class="muted" style="font-size:14px;">10 chủ đề — What, Why, How, What's next</p></div>
+        <div style="flex:1;"><div style="font-family:var(--font-heading);font-size:48px;color:var(--gold);margin-bottom:8px;opacity:0.4;">4</div><h4>Hỏi & Hành động</h4><p class="muted" style="font-size:14px;">Đặt câu hỏi cụ thể, nhận kế hoạch hành động</p></div>
+      </div>
+    </div>
+  </section>
+  <section style="padding:48px;text-align:center;border-top:1px solid var(--border);background:var(--sand);">
+    <h2 style="margin-bottom:8px;">Bắt đầu miễn phí</h2>
+    <p class="muted" style="margin-bottom:24px;">Nâng cấp khi bạn muốn đi sâu hơn</p>
+    <button class="btn btn-gold btn-lg" onclick="showScreen('s7')">Xem bảng giá</button>
+  </section>
+  <footer style="padding:32px 48px;text-align:center;border-top:1px solid var(--border);">
+    <p class="muted" style="font-size:13px;">360Human © 2026 · Về chúng tôi · Chính sách bảo mật · Liên hệ</p>
+  </footer>
+</div>
+
+<!-- S2 AUTH -->
+<div id="s2" class="screen">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px 20px;">
+    <div class="container-sm" style="width:100%;">
+      <div style="text-align:center;margin-bottom:32px;"><div style="font-family:var(--font-heading);font-size:24px;font-weight:600;cursor:pointer;" onclick="showScreen('s1')">360Human</div></div>
+      <div class="tabs" style="margin-bottom:24px;" id="auth-tabs">
+        <div class="tab active" id="tab-register" onclick="switchTab2('register')">Đăng ký</div>
+        <div class="tab" id="tab-login" onclick="switchTab2('login')">Đăng nhập</div>
+      </div>
+      <div id="register" style="display:block;">
+        <div class="field"><label>Email</label><input type="email" placeholder="email@example.com"></div>
+        <div class="field"><label>Mật khẩu</label><input type="password" placeholder="Tối thiểu 8 ký tự"></div>
+        <div class="field"><label>Xác nhận mật khẩu</label><input type="password" placeholder="Nhập lại mật khẩu"></div>
+        <button class="btn btn-gold btn-full btn-lg" onclick="showScreen('s3')">Tạo tài khoản</button>
+        <p class="muted" style="font-size:12px;text-align:center;margin-top:12px;">Bằng cách tạo tài khoản, bạn đồng ý với <a href="#" style="color:var(--gold);">điều khoản</a> của chúng tôi.</p>
+      </div>
+      <div id="login" style="display:none;">
+        <div class="field"><label>Email</label><input type="email" placeholder="email@example.com"></div>
+        <div class="field"><label>Mật khẩu</label><input type="password" placeholder="Mật khẩu"><div style="text-align:right;margin-top:6px;"><a href="#" style="font-size:13px;color:var(--gold);" onclick="openForgotPassword()">Quên mật khẩu?</a></div></div>
+        <button class="btn btn-gold btn-full btn-lg" onclick="showScreen('s4')">Đăng nhập</button>
+      </div>
+      <div class="separator">hoặc</div>
+      <button class="btn btn-ghost btn-full" style="opacity:0.5;cursor:not-allowed;" disabled>Google Sign-In (Sprint 2)</button>
+    </div>
+  </div>
+</div>
+
+<!-- S3 ONBOARDING -->
+<div id="s3" class="screen">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:64px 20px;">
+    <div class="container-sm" style="width:100%;">
+      <div style="text-align:center;margin-bottom:32px;"><div style="font-family:var(--font-heading);font-size:24px;font-weight:600;">360Human</div><p class="muted" style="margin-top:8px;font-size:15px;">Một vài thông tin để bắt đầu hành trình của bạn</p></div>
+      <div class="progress-bar" style="margin-bottom:8px;"><div class="fill" id="onboard-progress" style="width:0%"></div></div>
+      <p class="muted" style="font-size:12px;text-align:right;margin-bottom:24px;" id="onboard-step-label">0 / 7 hoàn thành</p>
+      <div class="field"><label>Họ và tên khai sinh</label><input type="text" placeholder="Nguyễn Thị Thảo" id="ob-name" oninput="updateProgress()"></div>
+      <div class="field"><label>Giới tính</label>
+        <div style="display:flex;gap:8px;" id="gender-group">
+          <button class="btn btn-ghost" style="flex:1;" onclick="selectGender(this,'Nam')">Nam</button>
+          <button class="btn btn-ghost" style="flex:1;" onclick="selectGender(this,'Nữ')">Nữ</button>
+          <button class="btn btn-ghost" style="flex:1;" onclick="selectGender(this,'Khác')">Khác</button>
+        </div>
+      </div>
+      <div class="field"><label>Ngày sinh</label>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;"><input type="number" placeholder="DD" min="1" max="31" id="ob-day" oninput="updateProgress()"></div>
+          <div style="flex:1;"><input type="number" placeholder="MM" min="1" max="12" id="ob-month" oninput="updateProgress()"></div>
+          <div style="flex:2;"><input type="number" placeholder="YYYY" min="1920" max="2010" id="ob-year" oninput="updateProgress()"></div>
+        </div>
+      </div>
+      <div class="field"><label>Giờ sinh <span class="muted">(quan trọng cho Human Design & Vedic)</span></label>
+        <input type="text" placeholder="VD: 14:30" id="ob-time" oninput="updateProgress()">
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--stone);cursor:pointer;"><input type="checkbox" style="width:auto;" id="ob-no-time" onchange="updateProgress()"> Tôi không nhớ giờ sinh</label>
+      </div>
+      <div class="field"><label>Nơi sinh</label><input type="text" placeholder="VD: TP. Hồ Chí Minh" id="ob-city" oninput="updateProgress()"></div>
+      <button class="btn btn-gold btn-full btn-lg" style="margin-top:8px;" onclick="showLoading()">Bắt đầu phân tích →</button>
+      <p class="muted" style="font-size:12px;text-align:center;margin-top:12px;">Thông tin của bạn được mã hóa và bảo mật</p>
+    </div>
+  </div>
+  <div id="loading-overlay" style="display:none;position:fixed;inset:0;background:var(--cream);z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px;">
+    <h2 style="margin-bottom:8px;">Đang tạo bản đồ cá nhân...</h2>
+    <p class="muted" style="font-size:14px;margin-bottom:16px;">5 hệ thống đang phân tích dữ liệu sinh của bạn</p>
+    <div id="loading-layers" style="width:340px;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+</div>
+
+<!-- S4 DASHBOARD -->
+<div id="s4" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">360Human</div>
+      <ul class="sidebar-nav">
+        <li class="active" onclick="showScreen('s4')">&#9689; Tổng Quan</li>
+        <li onclick="showScreen('s5')">&#11041; Biểu đồ hệ thống</li>
+        <li onclick="showScreen('s6')">&#9678; Phân tích sâu</li>
+        <li onclick="showScreen('s9')">&#9719; Lịch Vận</li>
+        <li onclick="showScreen('s10')">&#9651; Hành động</li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s7')">&#10022; Nâng cấp</li>
+        <li onclick="showScreen('s8')">&#9881; Cài đặt</li>
+      </ul>
+    </nav>
+    <div class="app-main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="hamburger" onclick="openMobileNav()">&#9776;</button>
+          <span style="font-weight:500;">Thảo Nguyễn</span>
+          <span class="badge badge-free" id="s4-tier-badge">FREE</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost btn-sm" id="s4-pdf-btn" style="opacity:0.4;cursor:not-allowed;" disabled onclick="alert('Xuất PDF chỉ khả dụng với gói PRO')">Xuất PDF &#128274;</button>
+          <button class="btn btn-ghost btn-sm" onclick="showScreen('s8')">&#9881;</button>
+        </div>
+      </div>
+      <div id="s4-pro-banner" class="pro-banner" style="display:none;padding:12px 48px;background:var(--success-bg);border-bottom:1px solid #9dd6b0;">
+        <p style="font-size:14px;color:var(--success);text-align:center;">&#10003; <strong>360Human PRO</strong> đã được kích hoạt — Tất cả 10 chủ đề và biểu đồ đã mở khóa</p>
+      </div>
+      <div style="padding:12px 48px;background:var(--sand);display:flex;align-items:center;gap:16px;">
+        <div class="progress-bar" style="flex:1;"><div class="fill" id="s4-progress-fill" style="width:20%"></div></div>
+        <span style="font-size:13px;color:var(--stone);" id="s4-progress-label">2/10 chủ đề — <a href="#" style="color:var(--gold);" onclick="showScreen('s7')">Mở khóa thêm 8 với PRO</a></span>
+      </div>
+      <div style="display:flex;gap:0;" class="two-col">
+        <!-- LEFT: Readings -->
+        <div style="flex:2;padding:32px 32px 80px 48px;border-right:1px solid var(--border);">
+          <h2 style="margin-bottom:6px;">Luận giải theo chủ đề</h2>
+          <p class="muted" style="font-size:14px;margin-bottom:24px;">What · Why · How · What's next</p>
+
+          <!-- Topic 1 - Free - ~500 words -->
+          <div class="accordion-item open">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>1. Tổng quan bản thân</span><span class="arrow">&#9662;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <h4 style="color:var(--gold);margin-bottom:12px;font-family:var(--font-heading);">Năng lượng cốt lõi</h4>
+                <p style="margin-bottom:16px;">Bạn là người mang năng lượng của sự chuyển hóa có chủ đích. Bên ngoài, bạn giữ vẻ điềm tĩnh và kiên định — nhưng bên trong, bạn luôn đang xử lý, phân tích, và tìm cách làm mọi thứ tinh tế hơn, sâu sắc hơn. Đây không phải đặc điểm học được — đây là cấu trúc căn bản của bạn, được xác nhận đồng thời bởi cả năm hệ thống chiêm tinh.</p>
+                <p style="margin-bottom:16px;">Sự kết hợp giữa <strong>Canh Kim Nhật Chủ</strong> trong BaZi và <strong>Tham Lang miếu địa tại Cung Mệnh Tuất</strong> trong Tử Vi tạo nên một tổ hợp đặc biệt: nền tảng kim loại cứng rắn, bất khuất, nhưng được bọc bên ngoài bởi sức hút tự nhiên và đa tài của Tham Lang. Bạn là kiếm sắc được giấu trong vỏ lụa — người ta cảm nhận sự hiện diện trước khi hiểu được độ sắc bén bên trong.</p>
+                <h4 style="color:var(--gold);margin-bottom:12px;margin-top:20px;font-family:var(--font-heading);">Cơ chế vận hành nội tâm</h4>
+                <p style="margin-bottom:16px;">Trong Human Design, bạn là <strong>Manifesting Generator với Emotional Authority</strong> — Profile 4/6 (Người Cơ Hội / Hình Mẫu). Điều này có nghĩa bạn không được thiết kế để đưa ra quyết định tức thì. Bạn cần thời gian cảm xúc — đợi qua một chu kỳ cảm xúc trước khi cam kết với điều gì lớn lao. Những ai biết điều này sẽ hiểu tại sao đôi khi bạn nói "để tôi suy nghĩ thêm" — đó không phải do dự, đó là trí tuệ.</p>
+                <p style="margin-bottom:16px;">Defined Head, Ajna và Throat Center tạo nên một người có tư duy rõ ràng, độc lập, và khả năng truyền đạt ý tưởng xuất sắc. Solar Plexus defined — nguồn cảm xúc phong phú và sâu sắc là la bàn quyết định của bạn. Bạn biết khi nào điều gì đó "đúng" vì cơ thể nói với bạn bằng ngôn ngữ cảm xúc.</p>
+                <h4 style="color:var(--gold);margin-bottom:12px;margin-top:20px;font-family:var(--font-heading);">Thiết kế để làm gì</h4>
+                <p style="margin-bottom:16px;">Life Path 7 trong Số học là con số của người tìm kiếm — không phải tìm kiếm thú vui, mà tìm kiếm ý nghĩa, chân lý, và sự hiểu biết sâu sắc về cách mọi thứ vận hành. Kết hợp với Expression 3 (người truyền đạt), bạn được thiết kế để hiểu sâu và chia sẻ điều đó một cách đẹp đẽ, dễ tiếp cận. Đây là tổ hợp hiếm gặp của nhà nghiên cứu-giáo viên.</p>
+                <p style="margin-bottom:16px;">Trong Vedic, Scorpio Ascendant và Saturn Dasha hiện tại (2021–2040) xác nhận: đây là giai đoạn xây dựng thật sự, không phải thời gian thử nghiệm. Mọi nỗ lực kiên nhẫn trong giai đoạn này đều được Saturn ghi nhận và thưởng xứng đáng — nhưng theo con đường chậm và chắc, không phải nhanh và rủi ro.</p>
+                <p style="margin-bottom:16px;">Khi tất cả hợp lại: bạn là người được thiết kế để đi sâu vào hệ thống, hiểu cơ chế, và dẫn dắt người khác qua sự hiểu biết đó. Không phải bằng quyền lực, mà bằng sự tín nhiệm được xây dựng qua thời gian và kết quả thực.</p>
+                <div class="source">nguồn: BaZi · Tử Vi · Human Design · Số học · Vedic</div>
+              </div>
+              <div style="border-top:1px solid var(--border);padding-top:16px;">
+                <h4 style="margin-bottom:12px;color:var(--stone);">Hành động đề xuất</h4>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div style="display:flex;justify-content:space-between;align-items:start;padding:10px 12px;background:var(--sand);border-radius:var(--radius-sm);">
+                    <div><strong style="font-size:14px;">1. Dành 10 phút mỗi sáng viết nhật ký</strong><br><span class="muted" style="font-size:13px;">Quan sát mâu thuẫn nội tại — viết ra, không phán xét</span></div>
+                    <span class="badge-system">BaZi</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:start;padding:10px 12px;background:var(--sand);border-radius:var(--radius-sm);">
+                    <div><strong style="font-size:14px;">2. Nói "không" ít nhất 1 lần/tuần</strong><br><span class="muted" style="font-size:13px;">Tham Lang miếu địa dễ thu hút — nhưng cần chọn lọc</span></div>
+                    <span class="badge-system">Tử Vi</span>
+                  </div>
+                </div>
+                <a href="#" style="font-size:13px;color:var(--gold);display:block;margin-top:12px;" onclick="showScreen('s10')">Xem toàn bộ hành động →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Topic 2 - Free - ~500 words -->
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>2. Sứ mệnh &amp; mục đích sống</span><span class="arrow">&#9662;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="reading-text">
+                <p style="margin-bottom:16px;">Sứ mệnh của bạn không nằm ở một nghề nghiệp cụ thể — nó nằm ở <strong>cách bạn tồn tại trong thế giới</strong>. Bạn được gọi để trở thành người hiểu sâu, kết nối những thứ tưởng chừng không liên quan, và biến sự hiểu biết đó thành ánh sáng cho người khác. Đây là kết luận nhất quán khi nhìn qua cả năm hệ thống.</p>
+                <p style="margin-bottom:16px;"><strong>Human Design xác nhận:</strong> Profile 4/6 là một trong những profile được gọi là "hành trình hai nửa cuộc đời". Nửa đầu (đến khoảng 35-40 tuổi) là thời gian thử nghiệm, học hỏi, xây dựng nền tảng mạng lưới. Nửa sau, bạn trở thành hình mẫu — người dẫn đường bằng cách đã sống qua và hiểu thật sự. Manifesting Generator như bạn không theo một con đường thẳng; bạn xây dựng sứ mệnh qua nhiều làn sóng trải nghiệm song song, và đó là điểm mạnh chứ không phải điểm yếu.</p>
+                <p style="margin-bottom:16px;"><strong>Số học làm rõ nội dung sứ mệnh:</strong> Life Path 7 + Expression 3 = người tìm kiếm chân lý và có năng lực truyền đạt nó. Soul Urge 9 tiết lộ động lực sâu xa nhất: bạn không thỏa mãn với thành công cá nhân thuần túy — bạn cần cảm giác đóng góp cho điều gì lớn hơn bản thân. Đây là điều giải thích tại sao những công việc "tốt về vật chất nhưng vô nghĩa" sẽ luôn khiến bạn cảm thấy thiếu thiếu.</p>
+                <p style="margin-bottom:16px;"><strong>Tử Vi chỉ ra lĩnh vực:</strong> Tham Lang miếu địa tại Cung Mệnh Tuất với Hóa Quyền tại Ngọ (Quan Lộc) — bạn có thiên hướng và sức mạnh tự nhiên trong vai trò lãnh đạo tư tưởng, tư vấn chuyên sâu, hoặc nghiên cứu-giảng dạy. Cung Quan Lộc có Tử Vi sao với Hóa Quyền là dấu hiệu của người tạo ra hệ thống và ảnh hưởng qua quyền lực tri thức.</p>
+                <p style="margin-bottom:16px;"><strong>Vedic chỉ ra thời điểm:</strong> Nhà thứ 9 (dharma, triết học, giảng dạy) được Jupiter và Venus chiếu sáng. Saturn Dasha hiện tại là thời gian gieo hạt kiên nhẫn cho sứ mệnh — kết quả rõ ràng sẽ đến sau 2033, nhưng nền móng bạn xây hôm nay quyết định quy mô của những gì sẽ đến.</p>
+                <p style="margin-bottom:16px;"><strong>Sống sứ mệnh thực tế:</strong> Đừng chờ "hoàn hảo" để bắt đầu. Mỗi lần bạn chia sẻ một insight thật sự sâu sắc với người khác — dù trong cuộc trò chuyện hàng ngày, bài viết, hay một buổi tư vấn — đó là lúc sứ mệnh đang được sống. Sứ mệnh không bắt đầu bằng một khoảnh khắc kịch tính. Nó bắt đầu bằng những hành động nhỏ, nhất quán, hàng ngày.</p>
+                <div class="source">nguồn: Human Design (Profile 4/6) · Số học (Life Path 7 + Soul Urge 9) · Tử Vi (Cung Quan Lộc) · Vedic (9th house)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Topics 3-10: locked for FREE -->
+          <div class="accordion-item locked" id="topic-3" onclick="handleLockedTopic(this,3)">
+            <div class="accordion-header"><span>3. Tình cảm &amp; các mối quan hệ <span id="lock-3" class="badge badge-pro" style="font-size:10px;margin-left:8px;">PRO</span></span><span class="arrow" id="arrow-3">&#9662;</span></div>
+            <div class="accordion-body" id="body-3">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <p style="margin-bottom:16px;">Trong tình cảm, bạn là người cần thời gian để mở lòng — nhưng khi đã mở, bạn đầu tư hoàn toàn và sâu sắc. Profile 4/6 tạo nên một nghịch lý đẹp: bạn cần kết nối sâu sắc nhưng đồng thời cần không gian cá nhân để tái tạo năng lượng. Emotional Authority có nghĩa là bạn không nên đưa ra quyết định tình cảm lớn trong trạng thái xúc động cao — hãy chờ cảm xúc lắng xuống và nghe tiếng nói của sự rõ ràng.</p>
+                <p style="margin-bottom:16px;">Kim gặp Thủy trong tứ trụ là tổ hợp lý tưởng cho tình cảm — bạn tương thích nhất với những người có tư duy rõ ràng nhưng cảm xúc phong phú, người cho bạn không gian nhưng không cảm thấy bị bỏ rơi. Cung Phu Thê có Thiên Cơ và Thiên Khôi — đối tác lý tưởng là người thông minh, có đạo đức, và tôn trọng sự độc lập của bạn.</p>
+                <p style="margin-bottom:16px;">Soul Urge 9 trong Số học nói rằng ở cấp độ sâu nhất, bạn tìm kiếm một mối quan hệ có ý nghĩa và đóng góp — không chỉ là sự thoải mái. Bạn muốn một đối tác cùng nhau xây dựng điều gì đó lớn hơn cả hai người.</p>
+                <div class="source">nguồn: Human Design (Profile 4/6, Emotional Authority) · BaZi (Dụng Thần Thủy) · Tử Vi (Cung Phu Thê) · Số học (Soul Urge 9)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item locked" id="topic-4" onclick="handleLockedTopic(this,4)">
+            <div class="accordion-header"><span>4. Sự nghiệp &amp; nghề nghiệp <span id="lock-4" class="badge badge-pro" style="font-size:10px;margin-left:8px;">PRO</span></span><span class="arrow" id="arrow-4">&#9662;</span></div>
+            <div class="accordion-body" id="body-4">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <p style="margin-bottom:16px;">Bạn không sinh ra để làm theo mệnh lệnh — bạn sinh ra để tạo ra hệ thống và dẫn dắt bằng tư duy. Cung Quan Lộc trong Tử Vi có Tử Vi sao với Hóa Quyền — đây là dấu hiệu của người lãnh đạo bằng trí tuệ và uy tín, không phải bằng chức vị. Canh Kim Nhật Chủ làm việc tốt nhất khi có tự chủ cao và mục tiêu rõ ràng.</p>
+                <p style="margin-bottom:16px;">Manifesting Generator phù hợp nhất với môi trường đa nhiệm có nhịp độ cao, nơi bạn có thể chuyển đổi giữa nhiều dự án song song. Khác với Generator thuần túy, bạn không chỉ phản ứng với cơ hội — bạn còn có khả năng khởi tạo. Tuy nhiên, chiến lược tốt nhất vẫn là phản ứng với điều gì đó đang xảy ra trong thực tế, không phải cố gắng tạo ra thứ gì từ chân không.</p>
+                <p style="margin-bottom:16px;">Các lĩnh vực phù hợp với tổ hợp biểu đồ của bạn: tư vấn chiến lược, nghiên cứu, giảng dạy, thiết kế sản phẩm và hệ thống, content sâu sắc về tâm lý hoặc triết học ứng dụng. Saturn Dasha trong Vedic xác nhận: lĩnh vực bạn đầu tư kiên nhẫn nhất bây giờ sẽ là nền tảng thành công lớn sau 2033.</p>
+                <div class="source">nguồn: Tử Vi (Cung Quan Lộc) · BaZi (Canh Kim) · Human Design (MG) · Vedic (Saturn Dasha)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item locked" id="topic-5" onclick="handleLockedTopic(this,5)">
+            <div class="accordion-header"><span>5. Tài chính &amp; tiền bạc <span id="lock-5" class="badge badge-pro" style="font-size:10px;margin-left:8px;">PRO</span></span><span class="arrow" id="arrow-5">&#9662;</span></div>
+            <div class="accordion-body" id="body-5">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <p style="margin-bottom:16px;">Với Expression Number 3 và Tham Lang miếu địa, bạn có khả năng tạo ra giá trị từ ý tưởng và sức hút cá nhân — nhưng dễ bị phân tán vào quá nhiều hướng cùng lúc. Tài chính của bạn phản ánh trực tiếp mức độ tập trung: khi bạn chọn 1-2 lĩnh vực chính và kiên định, tiền bắt đầu chảy vào. Khi bạn trải mỏng, mọi thứ đều không phát huy hết tiềm năng.</p>
+                <p style="margin-bottom:16px;">Cung Tài Bạch trong Tử Vi có Phá Quân và Liêm Trinh — đây là tổ hợp của sự đột phá tài chính qua những thay đổi lớn và dứt khoát. Bạn không tích lũy tiền theo kiểu nhỏ giọt — bạn thường có những bước nhảy vọt lớn khi đưa ra quyết định táo bạo đúng thời điểm.</p>
+                <p style="margin-bottom:16px;">Giai đoạn Đại Vận Đinh Dậu (2024-2033) theo BaZi là thời gian tích lũy và củng cố tài chính qua kỷ luật. Đầu tư vào kiến thức và kỹ năng bây giờ sẽ tạo ra đòn bẩy tài chính lớn trong giai đoạn sau.</p>
+                <div class="source">nguồn: Số học (Expression 3) · Tử Vi (Cung Tài Bạch) · BaZi (Đại Vận) · Vedic (2nd house)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item locked" id="topic-6" onclick="handleLockedTopic(this,6)">
+            <div class="accordion-header"><span>6. Sức khỏe &amp; năng lượng <span id="lock-6" class="badge badge-pro" style="font-size:10px;margin-left:8px;">PRO</span></span><span class="arrow" id="arrow-6">&#9662;</span></div>
+            <div class="accordion-body" id="body-6">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <p style="margin-bottom:16px;">Trong Human Design, Sacral Center không xác định trong biểu đồ của bạn mang một ý nghĩa quan trọng: bạn hấp thu và khuếch đại năng lượng từ môi trường xung quanh. Khi ở cạnh người energetic, bạn cảm thấy có thể làm mọi thứ — nhưng đó không phải năng lượng bền vững của bản thân. Sau khi tách ra khỏi đám đông, bạn cần thời gian phục hồi dài hơn người thường.</p>
+                <p style="margin-bottom:16px;">Canh Kim gặp Hỏa đôi Ngọ trong BaZi tạo ra xu hướng "đốt cháy" năng lượng ở cường độ cao trong thời gian ngắn. Cơ thể bạn hoạt động theo chu kỳ — bùng nổ rồi cần nghỉ sâu. Đừng chống lại chu kỳ tự nhiên này bằng caffeine và ý chí.</p>
+                <p style="margin-bottom:16px;">Cung Tật Ách có Thiên Lương và Thiên Giải — dấu hiệu tích cực về sức khỏe tổng thể, đặc biệt là khả năng tự hồi phục khi có không gian và thời gian nghỉ ngơi thích hợp. Ưu tiên giấc ngủ chất lượng và thời gian tĩnh lặng mỗi ngày là đầu tư y tế quan trọng nhất của bạn.</p>
+                <div class="source">nguồn: Human Design (Sacral undefined) · BaZi (Kim-Hỏa) · Tử Vi (Cung Tật Ách) · Vedic (6th house)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item locked" id="topic-7" onclick="handleLockedTopic(this,7)">
+            <div class="accordion-header"><span>7. Gia đình &amp; nguồn gốc <span id="lock-7" class="badge badge-pro" style="font-size:10px;margin-left:8px;">PRO</span></span><span class="arrow" id="arrow-7">&#9662;</span></div>
+            <div class="accordion-body" id="body-7">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <p style="margin-bottom:16px;">Cung Phụ Mẫu trong Tử Vi có Thiên Phủ — đây là dấu hiệu của người có nền tảng gia đình ổn định và hỗ trợ, dù đôi khi có những kỳ vọng vô hình mà bạn cảm thấy cần đáp ứng. Thiên Phủ là ngôi sao của sự bảo hộ và kho tàng — gia đình bạn có thể là nguồn lực quan trọng hơn bạn nhận ra.</p>
+                <p style="margin-bottom:16px;">Profile 4 trong Human Design là "Opportunist" — một trong những nguồn cơ hội lớn nhất của bạn đến từ mạng lưới quan hệ cá nhân gần gũi, bao gồm gia đình. Đây không phải sự phụ thuộc — đây là chiến lược tự nhiên của biểu đồ bạn. Đầu tư vào các mối quan hệ thân thiết là đầu tư vào sứ mệnh của bạn.</p>
+                <p style="margin-bottom:16px;">Hành Canh Kim trong BaZi — bạn mang tính cứng rắn và nguyên tắc vào quan hệ gia đình. Học cách mềm mại hơn trong môi trường gia đình — không phải yếu đuối hơn, mà là dùng đúng loại kim loại: không phải búa rìu trong nhà, mà là kim thêu tinh tế.</p>
+                <div class="source">nguồn: Tử Vi (Cung Phụ Mẫu) · Human Design (Profile 4) · BaZi (Canh Kim)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item locked" id="topic-8" onclick="handleLockedTopic(this,8)">
+            <div class="accordion-header"><span>8. Điểm mạnh &amp; tài năng <span id="lock-8" class="badge badge-pro" style="font-size:10px;margin-left:8px;">PRO</span></span><span class="arrow" id="arrow-8">&#9662;</span></div>
+            <div class="accordion-body" id="body-8">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <p style="margin-bottom:16px;">Điểm mạnh cốt lõi của bạn là tư duy hệ thống bậc cao — khả năng nhìn thấy pattern mà người khác bỏ qua, kết nối các điểm tưởng chừng rời rạc thành một bức tranh mạch lạc. Defined Ajna Center trong Human Design cho thấy bạn có cách nhìn thế giới rất riêng, nhất quán, và không dễ bị lung lay bởi ý kiến số đông — đây là tài sản quý giá trong thế giới đầy nhiễu.</p>
+                <p style="margin-bottom:16px;">Tham Lang miếu địa tại Cung Mệnh trao cho bạn sức hút tự nhiên và đa tài — bạn học nhanh, thích nghi tốt, và thường tạo ấn tượng tích cực ngay lần đầu gặp. Đây là tài năng xã hội không phải ai cũng có, đặc biệt mạnh khi kết hợp với chiều sâu tư duy của Life Path 7.</p>
+                <p style="margin-bottom:16px;">Channel 43-23 (Structuring) trong Human Design — bạn có khả năng biến những insight cá nhân độc đáo thành ngôn ngữ mà người khác hiểu được. Đây là nền tảng tự nhiên của người sáng tạo nội dung, giảng dạy, hoặc tư vấn chiến lược chuyên sâu.</p>
+                <div class="source">nguồn: Human Design (Defined Ajna, Channel 43-23) · Tử Vi (Tham Lang miếu địa) · Số học (Life Path 7)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item locked" id="topic-9" onclick="handleLockedTopic(this,9)">
+            <div class="accordion-header"><span>9. Thách thức &amp; bóng tối <span id="lock-9" class="badge badge-pro" style="font-size:10px;margin-left:8px;">PRO</span></span><span class="arrow" id="arrow-9">&#9662;</span></div>
+            <div class="accordion-body" id="body-9">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <p style="margin-bottom:16px;">Thách thức lớn nhất của bạn là chủ nghĩa hoàn hảo ẩn núp dưới danh nghĩa "cần chuẩn bị thêm". Canh Kim Nhật Chủ có xu hướng đặt tiêu chuẩn rất cao — cho bản thân và người khác. Khi tiêu chuẩn đó không đạt được, phản ứng tự nhiên là trì hoãn hoặc thu mình lại. Nhận ra pattern này là bước đầu tiên để vượt qua nó.</p>
+                <p style="margin-bottom:16px;">Hóa Kị tại Cung Tử Tức (Cự Môn) trong Tử Vi — cẩn thận với lời nói trong môi trường gần gũi, đặc biệt là giao tiếp với thế hệ trẻ hơn hoặc người bạn dẫn dắt. Lời nói thiếu cân nhắc có thể để lại dấu ấn lâu dài hơn bạn nghĩ.</p>
+                <p style="margin-bottom:16px;">Will Center không xác định trong Human Design — bạn không có willpower nội tại ổn định. Khi ở một mình, bạn dễ mất đà. Khi ở cạnh người có Will Center defined mạnh, bạn cảm thấy có thể chinh phục thế giới — nhưng đó không phải năng lượng bền vững. Học cách tạo ra cấu trúc bên ngoài (lịch trình, accountability partner) thay vì phụ thuộc vào willpower.</p>
+                <div class="source">nguồn: BaZi (Kiêu Thần) · Tử Vi (Hóa Kị-Cự Môn) · Human Design (Will Center undefined)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item locked" id="topic-10" onclick="handleLockedTopic(this,10)">
+            <div class="accordion-header"><span>10. Thời điểm &amp; chu kỳ <span id="lock-10" class="badge badge-pro" style="font-size:10px;margin-left:8px;">PRO</span></span><span class="arrow" id="arrow-10">&#9662;</span></div>
+            <div class="accordion-body" id="body-10">
+              <div class="reading-text" style="margin-bottom:24px;">
+                <p style="margin-bottom:16px;">Bạn đang ở trong Đại Vận Đinh Dậu (2024-2033) — giai đoạn của sự củng cố, tích lũy, và xây dựng nền móng. Đinh Hỏa tác động lên Canh Kim theo kiểu tinh luyện — đây không phải lửa thiêu, đây là lò rèn. Mọi khó khăn và áp lực trong giai đoạn này đều có chức năng: biến quặng thô thành thanh kiếm sắc bén.</p>
+                <p style="margin-bottom:16px;">2026 là năm Personal Year 9 trong Số học — năm kết thúc một chu kỳ 9 năm lớn (2018-2026). Những gì không còn phù hợp sẽ tự nhiên rời đi: mối quan hệ không còn phục vụ sự phát triển của bạn, công việc không còn align với sứ mệnh, patterns cũ cần được buông bỏ. Đừng cưỡng lại quá trình này — hãy tạo điều kiện cho sự kết thúc diễn ra với ân sủng.</p>
+                <p style="margin-bottom:16px;">Saturn Dasha trong Vedic tiếp tục đến 2040 — xác nhận đây là giai đoạn dài hạn của sự kiên nhẫn và kỷ luật. Antardasha Mercury hiện tại (2024-2027) là thời điểm thuận lợi đặc biệt cho việc học tập, viết lách, giao tiếp, và xây dựng hệ thống tư duy. Đây là thời điểm vàng để đặt nền móng tri thức.</p>
+                <div class="source">nguồn: BaZi (Đại Vận Đinh Dậu) · Số học (Personal Year 9) · Vedic (Saturn-Mercury Dasha)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q&A -->
+          <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);" id="s4-qa-section">
+            <h3 style="margin-bottom:6px;">Hỏi đáp</h3>
+            <p class="muted" style="font-size:14px;margin-bottom:16px;">Đặt câu hỏi về luận giải của bạn</p>
+            <div id="s4-qa-locked" style="display:block;">
+              <div style="display:flex;gap:8px;">
+                <input type="text" placeholder="Hỏi về luận giải của bạn..." style="flex:1;opacity:0.4;" disabled>
+                <button class="btn btn-gold btn-sm" style="opacity:0.4;cursor:not-allowed;" disabled>Gửi</button>
+              </div>
+              <p class="muted" style="font-size:13px;margin-top:8px;"><a href="#" style="color:var(--gold);" onclick="showScreen('s7')">Nâng cấp PRO</a> để sử dụng tính năng hỏi đáp</p>
+            </div>
+            <div id="s4-qa-active" style="display:none;">
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="s4-qa-input" placeholder="VD: Tại sao tôi hay trì hoãn? Làm sao tôi cải thiện được?" style="flex:1;" onkeydown="if(event.key==='Enter')sendQA('s4')">
+                <button class="btn btn-gold btn-sm" onclick="sendQA('s4')">Gửi</button>
+              </div>
+              <div id="s4-qa-result" style="display:none;"></div>
+              <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-ghost btn-sm" style="font-size:12px;" onclick="fillQA('s4','Tại sao tôi hay trì hoãn?')">Tại sao tôi hay trì hoãn?</button>
+                <button class="btn btn-ghost btn-sm" style="font-size:12px;" onclick="fillQA('s4','Mối quan hệ nào phù hợp với tôi?')">Mối quan hệ nào phù hợp?</button>
+                <button class="btn btn-ghost btn-sm" style="font-size:12px;" onclick="fillQA('s4','Điểm mạnh lớn nhất của tôi là gì?')">Điểm mạnh lớn nhất?</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Charts -->
+        <div style="flex:1;padding:32px 48px 32px 32px;">
+          <h3 style="margin-bottom:6px;">Biểu đồ hệ thống</h3>
+          <p class="muted" style="font-size:13px;margin-bottom:24px;">WHY — dữ liệu đằng sau luận giải</p>
+          <div style="display:flex;flex-direction:column;gap:8px;" id="s4-charts">
+            <div class="card" style="padding:16px;cursor:pointer;" id="chart-tuvi" onclick="goToChart('tu-vi')">
+              <div style="display:flex;align-items:center;gap:8px;"><span>&#11041;</span><span style="flex:1;">Tử Vi</span><span class="badge badge-pro chart-lock-badge" style="font-size:10px;">PRO</span><span class="chart-open-btn" style="display:none;font-size:12px;color:var(--gold);">Xem →</span></div>
+            </div>
+            <div class="card" style="padding:16px;cursor:pointer;" id="chart-bazi" onclick="goToChart('bazi')">
+              <div style="display:flex;align-items:center;gap:8px;"><span>&#9671;</span><span style="flex:1;">BaZi</span><span class="badge badge-pro chart-lock-badge" style="font-size:10px;">PRO</span><span class="chart-open-btn" style="display:none;font-size:12px;color:var(--gold);">Xem →</span></div>
+            </div>
+            <div class="card" style="padding:16px;cursor:pointer;" id="chart-hd" onclick="goToChart('hd')">
+              <div style="display:flex;align-items:center;gap:8px;"><span>&#9651;</span><span style="flex:1;">Human Design</span><span class="badge badge-pro chart-lock-badge" style="font-size:10px;">PRO</span><span class="chart-open-btn" style="display:none;font-size:12px;color:var(--gold);">Xem →</span></div>
+            </div>
+            <div class="card" style="padding:16px;cursor:pointer;" id="chart-num" onclick="goToChart('numerology')">
+              <div style="display:flex;align-items:center;gap:8px;"><span>&#9675;</span><span style="flex:1;">Số học</span><span class="badge badge-pro chart-lock-badge" style="font-size:10px;">PRO</span><span class="chart-open-btn" style="display:none;font-size:12px;color:var(--gold);">Xem →</span></div>
+            </div>
+            <div class="card" style="padding:16px;cursor:pointer;" id="chart-vedic" onclick="goToChart('vedic')">
+              <div style="display:flex;align-items:center;gap:8px;"><span>&#9734;</span><span style="flex:1;">Vedic</span><span class="badge badge-pro chart-lock-badge" style="font-size:10px;">PRO</span><span class="chart-open-btn" style="display:none;font-size:12px;color:var(--gold);">Xem →</span></div>
+            </div>
+          </div>
+          <div id="s4-chart-cta-locked"><button class="btn btn-gold btn-full" style="margin-top:16px;" onclick="openCheckout('pro')">Mở khóa biểu đồ</button></div>
+          <div id="s4-chart-cta-unlocked" style="display:none;"><button class="btn btn-ghost btn-full btn-sm" style="margin-top:16px;" onclick="showScreen('s5')">Xem toàn bộ biểu đồ →</button></div>
+          <div style="margin-top:24px;padding:16px;background:var(--sand);border-radius:var(--radius-lg);text-align:center;">
+            <p style="font-size:14px;margin-bottom:8px;">Có câu hỏi cụ thể hơn?</p>
+            <button class="btn btn-ghost btn-sm" onclick="showScreen('s6')">Phân tích sâu →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 SYSTEM READING -->
+<div id="s5" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">360Human</div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s4')">&#9689; Tổng Quan</li>
+        <li class="active" onclick="showScreen('s5')">&#11041; Biểu đồ hệ thống</li>
+        <li onclick="showScreen('s6')">&#9678; Phân tích sâu</li>
+        <li onclick="showScreen('s9')">&#9719; Lịch Vận</li>
+        <li onclick="showScreen('s10')">&#9651; Hành động</li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s7')">&#10022; Nâng cấp</li>
+        <li onclick="showScreen('s8')">&#9881; Cài đặt</li>
+      </ul>
+    </nav>
+    <div class="app-main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="hamburger" onclick="openMobileNav()">&#9776;</button>
+          <a href="#" style="color:var(--stone);font-size:14px;" onclick="showScreen('s4')">&#8592; Tổng Quan</a>
+          <span style="color:var(--border);">&#8250;</span>
+          <span style="font-weight:500;" id="s5-breadcrumb">Tử Vi</span>
+        </div>
+        <div class="topbar-right"><span class="badge badge-pro" id="s5-tier-badge">PRO</span></div>
+      </div>
+      <div class="tabs" style="padding:0 48px;" id="s5-tabs">
+        <div class="tab active" onclick="switchS5Tab(this,'tu-vi')" data-tab="tu-vi">Tử Vi</div>
+        <div class="tab" onclick="switchS5Tab(this,'bazi')" data-tab="bazi">BaZi</div>
+        <div class="tab" onclick="switchS5Tab(this,'hd')" data-tab="hd">Human Design</div>
+        <div class="tab" onclick="switchS5Tab(this,'numerology')" data-tab="numerology">Số học</div>
+        <div class="tab" onclick="switchS5Tab(this,'vedic')" data-tab="vedic">Vedic</div>
+      </div>
+
+      <!-- TỬ VI TAB -->
+      <div class="tab-panel active" id="panel-tu-vi">
+        <div style="display:flex;gap:0;" class="two-col">
+          <div style="flex:1;padding:32px 32px 32px 48px;border-right:1px solid var(--border);">
+            <h3 style="margin-bottom:16px;">Lá số Tử Vi — Thảo Nguyễn</h3>
+            <!-- 4x4 palace grid -->
+            <div class="palace-grid" style="max-width:420px;">
+              <!-- Row 1: Tỵ, Ngọ, Mùi, Thân -->
+              <div class="palace">
+                <span class="palace-name">Tỵ — Nô Bộc</span>
+                <div class="palace-stars">Thiên Tướng<br>Thiên Việt</div>
+              </div>
+              <div class="palace" style="background:var(--gold-bg);border:2px solid var(--gold);">
+                <span class="palace-name" style="color:var(--gold);">Ngọ — Quan Lộc ★</span>
+                <div class="palace-stars" style="color:var(--gold);">Tử Vi ★<br>Thiên Phủ<br><em style="font-size:9px;">Hóa Quyền</em></div>
+              </div>
+              <div class="palace">
+                <span class="palace-name">Mùi — Điền Trạch</span>
+                <div class="palace-stars">Vũ Khúc<br>Thiên Tướng</div>
+              </div>
+              <div class="palace">
+                <span class="palace-name">Thân — Phúc Đức</span>
+                <div class="palace-stars">Thái Âm ★<br><em style="font-size:9px;">Hóa Lộc</em><br>Thiên Đồng</div>
+              </div>
+              <!-- Row 2: Thìn, [CENTER 2x2], Dậu -->
+              <div class="palace">
+                <span class="palace-name">Thìn — Thiên Di</span>
+                <div class="palace-stars">Thái Dương (miếu)<br><em style="font-size:9px;">Hóa Khoa</em></div>
+              </div>
+              <div class="palace-center" style="grid-column:span 2;grid-row:span 2;">
+                <div>
+                  <div style="font-family:var(--font-heading);font-size:15px;font-weight:600;margin-bottom:4px;">Thảo Nguyễn</div>
+                  <div class="source" style="font-size:11px;">15.06.1997</div>
+                  <div class="source" style="font-size:11px;">Canh Kim · Mệnh Tuất</div>
+                  <div style="margin-top:8px;font-size:11px;color:var(--charcoal);">Mệnh Chủ: Văn Khúc</div>
+                  <div style="font-size:11px;color:var(--charcoal);">Thân Cung: Thân</div>
+                  <div style="font-size:11px;color:var(--charcoal);">Hành năm: Kim</div>
+                </div>
+              </div>
+              <div class="palace">
+                <span class="palace-name">Dậu — Phụ Mẫu</span>
+                <div class="palace-stars">Thiên Phủ</div>
+              </div>
+              <!-- Row 3: Mão, [continues center], Tuất -->
+              <div class="palace">
+                <span class="palace-name">Mão — Tật Ách</span>
+                <div class="palace-stars">Thiên Lương<br>Thiên Giải</div>
+              </div>
+              <div class="palace menh">
+                <span class="palace-name" style="color:var(--gold);">Tuất — ★ Mệnh</span>
+                <div class="palace-stars" style="color:var(--gold);">Tham Lang (miếu) ★<br>Cự Môn</div>
+              </div>
+              <!-- Row 4: Dần, Sửu, Tý, Hợi -->
+              <div class="palace">
+                <span class="palace-name">Dần — Tài Bạch</span>
+                <div class="palace-stars">Phá Quân<br>Liêm Trinh</div>
+              </div>
+              <div class="palace">
+                <span class="palace-name">Sửu — Tử Tức</span>
+                <div class="palace-stars">Cự Môn<br><em style="font-size:9px;">Hóa Kị</em><br>Thiên Cơ</div>
+              </div>
+              <div class="palace">
+                <span class="palace-name">Tý — Phu Thê</span>
+                <div class="palace-stars">Thiên Cơ<br>Thiên Khôi</div>
+              </div>
+              <div class="palace">
+                <span class="palace-name">Hợi — Huynh Đệ</span>
+                <div class="palace-stars">Thiên Đồng<br>Văn Xương</div>
+              </div>
+            </div>
+            <p class="source" style="margin-top:10px;">Click cung để xem chi tiết · ★ = cung đặc biệt</p>
+
+            <!-- Tứ Hóa table -->
+            <div style="margin-top:20px;">
+              <h4 style="margin-bottom:10px;">Tứ Hóa — Biến hóa năm Canh</h4>
+              <table class="sys-table">
+                <thead><tr><th>Biến hóa</th><th>Sao</th><th>Ý nghĩa</th></tr></thead>
+                <tbody>
+                  <tr><td><span style="color:var(--sage);font-weight:600;">Hóa Lộc</span></td><td>Thái Âm</td><td>Tài lộc, nữ tính flourish</td></tr>
+                  <tr><td><span style="color:var(--gold);font-weight:600;">Hóa Quyền</span></td><td>Tử Vi</td><td>Quyền lực, chủ động</td></tr>
+                  <tr><td><span style="color:var(--charcoal);font-weight:600;">Hóa Khoa</span></td><td>Thái Dương</td><td>Danh tiếng, học vấn</td></tr>
+                  <tr><td><span style="color:var(--ember);font-weight:600;">Hóa Kị</span></td><td>Cự Môn</td><td>Khẩu thiệt, giao tiếp cẩn thận</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div style="flex:1;padding:32px 48px 32px 32px;">
+            <h3 style="margin-bottom:16px;">Tham Lang miếu địa tại Cung Mệnh</h3>
+            <div class="reading-text">
+              <p style="margin-bottom:16px;">Tham Lang là ngôi sao của sức hút, đa tài, và tham vọng. Khi ở miếu địa (vị trí mạnh nhất), sức ảnh hưởng tự nhiên — không cần cố gắng. Tham Lang miếu tại Tuất tạo ra người có vẻ ngoài thu hút, giỏi giao tiếp, và có khả năng tạo ra kết nối bền chặt.</p>
+              <p style="margin-bottom:16px;">Nhưng Tham Lang miếu địa cũng mang nghĩa: bạn dễ phân tán năng lượng vào quá nhiều hướng. Sức hút lớn = nhiều cơ hội = khó chọn lọc. Bài học quan trọng nhất của Tham Lang là học cách từ chối đúng thứ để tập trung vào đúng thứ.</p>
+              <p style="margin-bottom:16px;">Cung Quan Lộc có Tử Vi sao với Hóa Quyền — đây là dấu ấn của người lãnh đạo và tạo ra hệ thống. Sự nghiệp phát triển mạnh nhất khi bạn ở vị trí chủ động, không phụ thuộc vào ai.</p>
+              <div class="source">nguồn: Tử Vi — Cung Mệnh tại Tuất · Tứ Hóa năm Canh</div>
+            </div>
+            <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+              <h4 style="margin-bottom:12px;">Hỏi về Tử Vi</h4>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="s5-tuvi-input" placeholder="VD: Tham Lang nghĩa là gì với sự nghiệp?" style="flex:1;" onkeydown="if(event.key==='Enter')sendQA('s5-tuvi')">
+                <button class="btn btn-gold btn-sm" onclick="sendQA('s5-tuvi')">Gửi</button>
+              </div>
+              <div id="s5-tuvi-result" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BAZI TAB -->
+      <div class="tab-panel" id="panel-bazi">
+        <div style="display:flex;gap:0;" class="two-col">
+          <div style="flex:1;padding:32px 32px 32px 48px;border-right:1px solid var(--border);">
+            <h3 style="margin-bottom:16px;">Tứ Trụ — BaZi</h3>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:400px;margin-bottom:16px;">
+              <div style="text-align:center;"><p class="muted" style="font-size:12px;margin-bottom:8px;">Giờ</p>
+                <div class="card" style="padding:12px;">
+                  <div style="font-size:18px;font-weight:600;font-family:var(--font-heading);">Nhâm</div>
+                  <div class="source">Ngọ</div>
+                  <div style="font-size:10px;color:var(--stone);margin-top:4px;">Thực Thần</div>
+                </div>
+              </div>
+              <div style="text-align:center;"><p class="muted" style="font-size:12px;margin-bottom:8px;">Ngày ★</p>
+                <div class="card" style="padding:12px;border:2px solid var(--gold);">
+                  <div style="font-size:18px;font-weight:600;font-family:var(--font-heading);color:var(--gold);">Canh</div>
+                  <div class="source" style="color:var(--gold);">Ngọ ★</div>
+                  <div style="font-size:10px;color:var(--gold);margin-top:4px;">Nhật Chủ</div>
+                </div>
+              </div>
+              <div style="text-align:center;"><p class="muted" style="font-size:12px;margin-bottom:8px;">Tháng</p>
+                <div class="card" style="padding:12px;">
+                  <div style="font-size:18px;font-weight:600;font-family:var(--font-heading);">Đinh</div>
+                  <div class="source">Mùi</div>
+                  <div style="font-size:10px;color:var(--stone);margin-top:4px;">Chính Quan</div>
+                </div>
+              </div>
+              <div style="text-align:center;"><p class="muted" style="font-size:12px;margin-bottom:8px;">Năm</p>
+                <div class="card" style="padding:12px;">
+                  <div style="font-size:18px;font-weight:600;font-family:var(--font-heading);">Đinh</div>
+                  <div class="source">Sửu</div>
+                  <div style="font-size:10px;color:var(--stone);margin-top:4px;">Chính Quan</div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:12px;background:var(--sand);border-radius:var(--radius-md);margin-bottom:16px;">
+              <p style="font-size:13px;"><strong>Nhật Chủ:</strong> Canh Kim · <strong>Dụng Thần:</strong> Thủy · <strong>Kỵ Thần:</strong> Hỏa</p>
+            </div>
+
+            <!-- Thập Thần table -->
+            <h4 style="margin-bottom:10px;">Thập Thần trong Tứ Trụ</h4>
+            <table class="sys-table" style="margin-bottom:16px;">
+              <thead><tr><th>Trụ</th><th>Can Chi</th><th>Thập Thần</th></tr></thead>
+              <tbody>
+                <tr><td>Giờ</td><td>Nhâm-Ngọ</td><td>Thực Thần</td></tr>
+                <tr><td style="color:var(--gold);font-weight:600;">Ngày ★</td><td style="color:var(--gold);">Canh-Ngọ</td><td style="color:var(--gold);">Nhật Chủ</td></tr>
+                <tr><td>Tháng</td><td>Đinh-Mùi</td><td>Chính Quan</td></tr>
+                <tr><td>Năm</td><td>Đinh-Sửu</td><td>Chính Quan</td></tr>
+              </tbody>
+            </table>
+
+            <!-- Đại Vận table -->
+            <h4 style="margin-bottom:10px;">Đại Vận</h4>
+            <div class="sys-table-wrap"><table class="sys-table sys-table-wide" style="margin-bottom:16px;">
+              <thead><tr><th>#</th><th>Can Chi</th><th>Năm</th><th>Tuổi</th><th>Đặc trưng</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Bính Ngọ</td><td>2007–2016</td><td>10–19</td><td>Phát triển tư duy</td></tr>
+                <tr><td>2</td><td>Ất Tỵ</td><td>2017–2026</td><td>20–29</td><td>Học hỏi, thử nghiệm</td></tr>
+                <tr style="background:var(--gold-bg);"><td style="color:var(--gold);font-weight:600;">3 ★</td><td style="color:var(--gold);">Đinh Dậu</td><td>2024–2033</td><td>27–36</td><td style="color:var(--gold);">★ Hiện tại: tích lũy</td></tr>
+                <tr><td>4</td><td>Mậu Tuất</td><td>2034–2043</td><td>37–46</td><td>Xây dựng vị thế</td></tr>
+                <tr><td>5</td><td>Kỷ Hợi</td><td>2044–2053</td><td>47–56</td><td>Thu hoạch thành quả</td></tr>
+              </tbody>
+            </table></div>
+
+            <!-- Thần Sát -->
+            <h4 style="margin-bottom:8px;">Thần Sát &amp; Xung Hình</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+              <span class="badge-system">Thiên Đức (Mùi)</span>
+              <span class="badge-system">Nguyệt Đức (Sửu)</span>
+              <span class="badge-system">Thiên Ất Quý Nhân (Sửu, Mùi)</span>
+              <span class="badge-system" style="color:var(--ember);">Không Vong (Thìn, Tỵ)</span>
+            </div>
+            <p style="font-size:12px;color:var(--stone);">Xung: Ngọ-Ngọ tự hình (2 Ngọ trong trụ ngày-giờ)</p>
+          </div>
+          <div style="flex:1;padding:32px 48px 32px 32px;">
+            <h3 style="margin-bottom:16px;">Canh Kim Nhật Chủ — Kiếm trong lửa</h3>
+            <div class="reading-text">
+              <p style="margin-bottom:16px;">Canh Kim là kim loại cứng nhất — thanh kiếm, búa rìu. Bạn có bản chất cương nghị, nguyên tắc, và không dễ bị bẻ cong. Khi đã cam kết với điều gì, bạn có thể duy trì đến cùng — đây là điểm mạnh nhưng cũng là nguồn gốc của sự cứng nhắc đôi khi không cần thiết.</p>
+              <p style="margin-bottom:16px;">Ngọn lửa đôi Ngọ trong trụ ngày và trụ giờ tạo ra áp lực liên tục. Canh Kim gặp Hỏa = bị tôi luyện. Cuộc đời bạn là quá trình tôi luyện có chủ đích — mỗi khó khăn là một lần nung nóng để tạo ra độ sắc bén cao hơn.</p>
+              <p style="margin-bottom:16px;"><strong>Dụng Thần Thủy</strong> — Thủy làm mát Kim, dẫn năng lượng đi đúng hướng. Môi trường và con người mang hành Thủy (người sinh năm Nhâm, Quý, Hợi, Tý) sẽ giúp bạn phát huy tốt nhất. Tránh môi trường Hỏa cường quá mức — áp lực quá lớn mà không có thời gian phục hồi sẽ làm mòn chứ không tôi luyện.</p>
+              <p style="margin-bottom:16px;"><strong>Chính Quan đôi</strong> (Đinh tại Tháng và Năm) — bạn sống trong môi trường có nhiều quy tắc và kỳ vọng xã hội. Học cách phân biệt quy tắc nào phục vụ bạn và quy tắc nào chỉ là gánh nặng mang theo từ quá khứ.</p>
+              <div class="source">nguồn: BaZi — Tứ Trụ phân tích · Thập Thần · Đại Vận</div>
+            </div>
+            <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+              <h4 style="margin-bottom:12px;">Hỏi về BaZi</h4>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="s5-bazi-input" placeholder="VD: Năm 2026 có tốt cho tôi không?" style="flex:1;" onkeydown="if(event.key==='Enter')sendQA('s5-bazi')">
+                <button class="btn btn-gold btn-sm" onclick="sendQA('s5-bazi')">Gửi</button>
+              </div>
+              <div id="s5-bazi-result" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HUMAN DESIGN TAB -->
+      <div class="tab-panel" id="panel-hd">
+        <div style="display:flex;gap:0;" class="two-col">
+          <div style="flex:1;padding:32px 32px 32px 48px;border-right:1px solid var(--border);">
+            <h3 style="margin-bottom:16px;">Bodygraph — Human Design</h3>
+            <!-- Main card -->
+            <div class="card" style="padding:16px;margin-bottom:12px;max-width:380px;">
+              <table style="width:100%;font-size:13px;">
+                <tr><td style="color:var(--stone);padding:4px 0;width:45%;">Type</td><td style="font-weight:600;">Manifesting Generator</td></tr>
+                <tr><td style="color:var(--stone);padding:4px 0;">Strategy</td><td>Respond, then initiate</td></tr>
+                <tr><td style="color:var(--stone);padding:4px 0;">Authority</td><td>Emotional Solar Plexus</td></tr>
+                <tr><td style="color:var(--stone);padding:4px 0;">Profile</td><td style="font-weight:600;">4/6 — Opportunist / Role Model</td></tr>
+                <tr><td style="color:var(--stone);padding:4px 0;">Definition</td><td>Split (2 definitions)</td></tr>
+                <tr><td style="color:var(--stone);padding:4px 0;">Not-Self Theme</td><td style="color:var(--ember);">Frustration &amp; Anger</td></tr>
+                <tr><td style="color:var(--stone);padding:4px 0;">Incarnation Cross</td><td>Right Angle Cross of Explanation</td></tr>
+              </table>
+            </div>
+
+            <!-- 9 Centers -->
+            <h4 style="margin-bottom:10px;">9 Trung tâm năng lượng</h4>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:380px;margin-bottom:16px;">
+              <div class="hd-center defined"><div class="hd-dot"></div>HEAD (Đầu)</div>
+              <div class="hd-center defined"><div class="hd-dot"></div>AJNA (Tư duy)</div>
+              <div class="hd-center defined"><div class="hd-dot"></div>THROAT (Biểu đạt)</div>
+              <div class="hd-center undefined"><div class="hd-dot"></div>G CENTER (Bản sắc)</div>
+              <div class="hd-center undefined"><div class="hd-dot"></div>HEART/WILL (Ý chí)</div>
+              <div class="hd-center defined"><div class="hd-dot"></div>SOLAR PLEXUS (Cảm xúc)</div>
+              <div class="hd-center undefined"><div class="hd-dot"></div>SACRAL (Năng lượng gốc)</div>
+              <div class="hd-center undefined"><div class="hd-dot"></div>SPLEEN (Trực giác)</div>
+              <div class="hd-center undefined"><div class="hd-dot"></div>ROOT (Áp lực gốc)</div>
+            </div>
+            <p class="muted" style="font-size:11px;margin-bottom:16px;">&#9632; Defined (tối) = năng lượng ổn định · &#9633; Undefined (nhạt) = năng lượng linh hoạt</p>
+
+            <!-- Active Channels -->
+            <h4 style="margin-bottom:10px;">Channels kích hoạt</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;max-width:380px;">
+              <div style="padding:8px 12px;background:var(--sand);border-radius:var(--radius-sm);font-size:12px;">
+                <strong>43-23 Structuring</strong> <span class="muted">(Head→Throat)</span><br>
+                <span style="color:var(--charcoal);">Cá tính riêng biệt, insight độc lập</span>
+              </div>
+              <div style="padding:8px 12px;background:var(--sand);border-radius:var(--radius-sm);font-size:12px;">
+                <strong>35-36 Transitoriness</strong> <span class="muted">(Throat→Solar Plexus)</span><br>
+                <span style="color:var(--charcoal);">Kinh nghiệm cảm xúc, ham muốn trải nghiệm</span>
+              </div>
+              <div style="padding:8px 12px;background:var(--sand);border-radius:var(--radius-sm);font-size:12px;">
+                <strong>19-49 Synthesis</strong> <span class="muted">(Root→Solar Plexus)</span><br>
+                <span style="color:var(--charcoal);">Nhạy cảm với nhu cầu người khác</span>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1;padding:32px 48px 32px 32px;">
+            <h3 style="margin-bottom:16px;">Manifesting Generator — Người đa năng</h3>
+            <div class="reading-text">
+              <p style="margin-bottom:16px;">Là Manifesting Generator, bạn được thiết kế để làm nhiều thứ cùng lúc — và làm tốt. Đừng cố gắng đơn giản hóa bản thân để phù hợp với lời khuyên "chỉ tập trung một thứ". Đó là lời khuyên đúng cho nhiều kiểu người, nhưng không phải cho bạn. Bạn được thiết kế để đa nhiệm có chủ đích.</p>
+              <p style="margin-bottom:16px;"><strong>Profile 4/6 — Opportunist / Role Model:</strong> Line 4 nghĩa là bạn xây dựng cơ hội qua mạng lưới quan hệ cá nhân gần gũi — không phải qua việc gặp người lạ liên tục, mà qua việc đào sâu vào các mối quan hệ hiện có. Line 6 nghĩa là bạn đang trong giai đoạn "trên mái nhà" (khoảng 28-50 tuổi) — quan sát, học hỏi, trước khi trở thành Role Model thật sự trong nửa sau cuộc đời.</p>
+              <p style="margin-bottom:16px;"><strong>Emotional Authority:</strong> Đây là điều quan trọng nhất. Bạn KHÔNG nên ra quyết định trong trạng thái cảm xúc cao — dù là hưng phấn hay lo lắng. Hãy chờ đến khi cảm xúc lắng xuống và bạn cảm thấy rõ ràng. Câu hỏi đúng không phải "Tôi có muốn không?" mà là "Sau 3 ngày, tôi vẫn muốn điều này không?"</p>
+              <p style="margin-bottom:16px;">Channel 43-23 (Structuring) cho thấy bạn có những insight rất độc lập, đôi khi khó giải thích ngay lập tức. Đây là dấu hiệu của người tư duy theo cách riêng — hãy tin tưởng vào quá trình đó, ngay cả khi người khác chưa hiểu ngay.</p>
+              <div class="source">nguồn: Human Design — Type, Authority, Profile, Centers, Channels</div>
+            </div>
+            <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+              <h4 style="margin-bottom:12px;">Hỏi về Human Design</h4>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="s5-hd-input" placeholder="VD: Authority của tôi hoạt động thế nào?" style="flex:1;" onkeydown="if(event.key==='Enter')sendQA('s5-hd')">
+                <button class="btn btn-gold btn-sm" onclick="sendQA('s5-hd')">Gửi</button>
+              </div>
+              <div id="s5-hd-result" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NUMEROLOGY TAB -->
+      <div class="tab-panel" id="panel-numerology">
+        <div style="display:flex;gap:0;" class="two-col">
+          <div style="flex:1;padding:32px 32px 32px 48px;border-right:1px solid var(--border);">
+            <h3 style="margin-bottom:16px;">Bản đồ số — Số học Pythagorean</h3>
+
+            <!-- Core numbers -->
+            <h4 style="margin-bottom:10px;">Số cốt lõi</h4>
+            <table class="sys-table" style="max-width:380px;margin-bottom:16px;">
+              <thead><tr><th>Số</th><th>Giá trị</th><th>Ý nghĩa</th></tr></thead>
+              <tbody>
+                <tr style="background:var(--gold-bg);"><td style="color:var(--gold);font-weight:600;">Life Path</td><td style="font-size:18px;font-weight:700;font-family:var(--font-heading);color:var(--gold);">7</td><td>Người Tìm Kiếm</td></tr>
+                <tr><td>Expression</td><td style="font-size:16px;font-weight:600;">3</td><td>Người Truyền Đạt</td></tr>
+                <tr><td>Soul Urge</td><td style="font-size:16px;font-weight:600;">9</td><td>Người Cống Hiến</td></tr>
+                <tr><td>Personality</td><td style="font-size:16px;font-weight:600;">3</td><td>Năng động, sáng tạo</td></tr>
+                <tr><td>Birthday</td><td style="font-size:16px;font-weight:600;">6</td><td>15→6 · Hòa hợp</td></tr>
+                <tr><td>Maturity</td><td style="font-size:16px;font-weight:600;">1</td><td>7+3=10→1 · Tiên phong</td></tr>
+              </tbody>
+            </table>
+
+            <!-- 4 Pinnacles -->
+            <h4 style="margin-bottom:10px;">4 Đỉnh cao (Pinnacles)</h4>
+            <table class="sys-table" style="max-width:380px;margin-bottom:16px;">
+              <thead><tr><th>Đỉnh</th><th>Giai đoạn</th><th>Số</th><th>Chủ đề</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>0–26 tuổi</td><td><strong>3</strong></td><td>Sáng tạo, biểu đạt</td></tr>
+                <tr style="background:var(--gold-bg);"><td style="color:var(--gold);font-weight:600;">2 ★</td><td style="color:var(--gold);">27–35 tuổi</td><td style="font-weight:700;color:var(--gold);">1</td><td style="color:var(--gold);">★ Hiện tại: khởi đầu độc lập</td></tr>
+                <tr><td>3</td><td>36–44 tuổi</td><td><strong>4</strong></td><td>Xây dựng nền tảng</td></tr>
+                <tr><td>4</td><td>45+ tuổi</td><td><strong>7</strong></td><td>Chiều sâu &amp; trí tuệ</td></tr>
+              </tbody>
+            </table>
+
+            <!-- Challenges -->
+            <h4 style="margin-bottom:10px;">Thử thách</h4>
+            <table class="sys-table" style="max-width:380px;margin-bottom:16px;">
+              <thead><tr><th>Thử thách</th><th>Số</th><th>Bài học</th></tr></thead>
+              <tbody>
+                <tr><td>1 (0–35)</td><td><strong>4</strong></td><td>Kỷ luật, nhẫn nại</td></tr>
+                <tr><td>2 (0–35)</td><td><strong>2</strong></td><td>Nhạy cảm quá mức</td></tr>
+                <tr><td>3 (36+)</td><td><strong>6</strong></td><td>Trách nhiệm</td></tr>
+                <tr style="background:var(--ember-bg);"><td>Chính</td><td style="color:var(--ember);font-weight:600;">2</td><td style="color:var(--ember);">Tin tưởng người khác</td></tr>
+              </tbody>
+            </table>
+
+            <!-- Personal year/month -->
+            <h4 style="margin-bottom:10px;">Chu kỳ cá nhân 2026</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;max-width:380px;">
+              <div style="display:flex;justify-content:space-between;padding:8px 12px;background:var(--gold-bg);border-radius:var(--radius-sm);">
+                <span style="font-size:13px;">Năm cá nhân 2026</span><span style="font-weight:700;color:var(--gold);">9 — Hoàn thành</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 12px;background:var(--sand);border-radius:var(--radius-sm);">
+                <span style="font-size:13px;">Tháng 3/2026</span><span style="font-weight:600;">3 — Sáng tạo</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 12px;background:var(--sand);border-radius:var(--radius-sm);">
+                <span style="font-size:13px;">Tháng 4/2026</span><span style="font-weight:600;">4 — Tập trung</span>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1;padding:32px 48px 32px 32px;">
+            <h3 style="margin-bottom:16px;">Life Path 7 — Nhà tư tưởng sâu sắc</h3>
+            <div class="reading-text">
+              <p style="margin-bottom:16px;">Số 7 là số của sự tìm kiếm ý nghĩa, của nghiên cứu và chiều sâu. Bạn không hài lòng với câu trả lời bề mặt — bạn cần hiểu cơ chế vận hành, nguyên nhân gốc rễ, và tầng nghĩa ẩn bên dưới. Đây là điểm mạnh lớn nhưng cũng là nguồn gốc của sự cô đơn khi không tìm được người hiểu cùng tầng sâu.</p>
+              <p style="margin-bottom:16px;">Sự kết hợp <strong>7-3</strong> (Life Path-Expression) tạo ra người vừa có chiều sâu nội tâm (7) vừa có khả năng truyền đạt xuất sắc (3). Đây là tổ hợp hiếm gặp của giáo viên, nhà văn, diễn giả, podcaster — người có thể lấy những thứ phức tạp và biến chúng thành dễ hiểu mà không mất đi chiều sâu.</p>
+              <p style="margin-bottom:16px;"><strong>Soul Urge 9</strong> cho thấy ở cấp độ linh hồn, bạn muốn cống hiến và để lại di sản — không chỉ thành công cá nhân. Khi công việc chỉ phục vụ lợi ích cá nhân mà không kết nối với điều lớn hơn, bạn sẽ cảm thấy rỗng tuếch dù đang thành công theo mắt người ngoài.</p>
+              <p style="margin-bottom:16px;">Đỉnh cao số 1 hiện tại (27-35 tuổi) là giai đoạn khởi đầu độc lập — đây là thời điểm lý tưởng để bắt đầu xây dựng dự án hoặc sự nghiệp mang dấu ấn cá nhân rõ ràng, không phụ thuộc vào thương hiệu của người khác.</p>
+              <div class="source">nguồn: Pythagorean Numerology · Số cốt lõi · Đỉnh cao</div>
+            </div>
+            <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+              <h4 style="margin-bottom:12px;">Hỏi về Số học</h4>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="s5-num-input" placeholder="VD: Năm cá nhân 2026 ảnh hưởng thế nào?" style="flex:1;" onkeydown="if(event.key==='Enter')sendQA('s5-num')">
+                <button class="btn btn-gold btn-sm" onclick="sendQA('s5-num')">Gửi</button>
+              </div>
+              <div id="s5-num-result" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VEDIC TAB -->
+      <div class="tab-panel" id="panel-vedic">
+        <div style="display:flex;gap:0;" class="two-col">
+          <div style="flex:1;padding:32px 32px 32px 48px;border-right:1px solid var(--border);">
+            <h3 style="margin-bottom:16px;">Natal Chart — Vedic Astrology (Jyotish)</h3>
+            <div class="card" style="padding:14px;border-left:4px solid var(--gold);margin-bottom:12px;max-width:380px;">
+              <p style="font-size:12px;color:var(--stone);margin-bottom:4px;">Ascendant (Lagna)</p>
+              <p style="font-size:18px;font-weight:600;font-family:var(--font-heading);">Scorpio — Vrishchika</p>
+              <p class="muted" style="font-size:13px;margin-top:4px;">Anuradha Nakshatra · Perseverance</p>
+            </div>
+
+            <!-- Planet table -->
+            <h4 style="margin-bottom:10px;">Vị trí hành tinh</h4>
+            <div class="sys-table-wrap" style="max-width:420px;margin-bottom:16px;">
+              <table class="sys-table sys-table-wide" style="min-width:420px;">
+                <thead><tr><th>Hành tinh</th><th>Rashi</th><th>Nhà</th><th>Nakshatra</th><th>Vị thế</th></tr></thead>
+                <tbody>
+                  <tr><td>☀️ Mặt Trời</td><td>Gemini (Song Tử)</td><td>8th</td><td>Ardra</td><td style="color:var(--ember);">Debilitated</td></tr>
+                  <tr><td>🌙 Mặt Trăng</td><td>Capricorn (Ma Kết)</td><td>3rd</td><td>Shravana</td><td>Neutral</td></tr>
+                  <tr><td>♂ Mars</td><td>Scorpio (Thiên Yết)</td><td>1st</td><td>Anuradha</td><td style="color:var(--sage);">Own sign</td></tr>
+                  <tr><td>☿ Mercury</td><td>Gemini (Song Tử)</td><td>8th</td><td>Mrigashira</td><td style="color:var(--sage);">Exalted</td></tr>
+                  <tr><td>♃ Jupiter</td><td>Capricorn (Ma Kết)</td><td>3rd</td><td>Sravana</td><td style="color:var(--ember);">Debilitated</td></tr>
+                  <tr><td>♀ Venus</td><td>Cancer (Cự Giải)</td><td>9th</td><td>Pushya</td><td>Neutral</td></tr>
+                  <tr><td>♄ Saturn</td><td>Aries (Bạch Dương)</td><td>6th</td><td>Bharani</td><td style="color:var(--ember);">Debilitated</td></tr>
+                  <tr><td>☊ Rahu</td><td>Virgo (Xử Nữ)</td><td>11th</td><td>Hasta</td><td>—</td></tr>
+                  <tr><td>☋ Ketu</td><td>Pisces (Song Ngư)</td><td>5th</td><td>Uttara Bhadrapada</td><td>—</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Dasha timeline -->
+            <h4 style="margin-bottom:10px;">Dasha hiện tại</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;max-width:380px;margin-bottom:16px;">
+              <div style="padding:10px 12px;background:var(--gold-bg);border-radius:var(--radius-sm);border-left:3px solid var(--gold);">
+                <strong style="font-size:13px;color:var(--gold);">Saturn Mahadasha (2021–2040)</strong>
+                <p class="muted" style="font-size:12px;margin-top:2px;">Giai đoạn xây dựng kỷ luật và trách nhiệm</p>
+              </div>
+              <div style="padding:10px 12px;background:var(--sand);border-radius:var(--radius-sm);">
+                <strong style="font-size:13px;">Saturn-Mercury Antardasha (2024–2027)</strong>
+                <p class="muted" style="font-size:12px;margin-top:2px;">★ Hiện tại — Tư duy sắc bén, học tập &amp; viết lách</p>
+              </div>
+              <div style="padding:10px 12px;background:var(--sand);border-radius:var(--radius-sm);">
+                <strong style="font-size:13px;">Saturn-Ketu Antardasha (2027–2028)</strong>
+                <p class="muted" style="font-size:12px;margin-top:2px;">Chuyển hóa nội tâm, cắt bỏ</p>
+              </div>
+            </div>
+
+            <!-- Key Yogas -->
+            <h4 style="margin-bottom:10px;">Yoga quan trọng</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;max-width:380px;">
+              <div style="padding:8px 12px;background:var(--sage-bg);border-radius:var(--radius-sm);font-size:12px;"><strong style="color:var(--sage);">Viparita Raja Yoga</strong><br>Saturn in 6th — Thành công từ khó khăn và thử thách</div>
+              <div style="padding:8px 12px;background:var(--sage-bg);border-radius:var(--radius-sm);font-size:12px;"><strong style="color:var(--sage);">Budha-Aditya Yoga</strong><br>Sun-Mercury together — Trí tuệ sắc bén, danh tiếng qua tri thức</div>
+              <div style="padding:8px 12px;background:var(--sand);border-radius:var(--radius-sm);font-size:12px;"><strong>Shravana Moon</strong><br>Lắng nghe, học hỏi từ mọi nguồn — tài năng nghe sâu</div>
+            </div>
+          </div>
+          <div style="flex:1;padding:32px 48px 32px 32px;">
+            <h3 style="margin-bottom:16px;">Scorpio Ascendant — Nhà biến đổi</h3>
+            <div class="reading-text">
+              <p style="margin-bottom:16px;">Ascendant Scorpio mang đến một con người bí ẩn, sâu sắc, và có sức ảnh hưởng lớn trong im lặng. Bạn không cần nói nhiều để người khác cảm nhận được sự hiện diện. Mars làm chủ Lagna và ở trong Scorpio (own sign) — tạo nên sức mạnh và khả năng phục hồi phi thường. Bạn không dễ bị hạ gục — và khi bị hạ, bạn có khả năng tái sinh như phượng hoàng.</p>
+              <p style="margin-bottom:16px;"><strong>Saturn Dasha</strong> kéo dài đến 2040 — đây là giai đoạn Karma được giải quyết qua kỷ luật và trách nhiệm. Saturn trong nhà 6 (Viparita Raja Yoga) thực ra là dấu hiệu tích cực: thành công đến qua việc vượt qua khó khăn, không phải né tránh chúng. Mỗi thử thách trong giai đoạn này là một bài kiểm tra Saturn.</p>
+              <p style="margin-bottom:16px;"><strong>Mercury Antardasha hiện tại (đến 2027)</strong> là thời điểm vàng cho việc học tập, nghiên cứu, viết lách, và xây dựng hệ thống tư duy. Budha-Aditya Yoga (Sun-Mercury đồng cung) khuếch đại khả năng trí tuệ và danh tiếng qua tri thức. Đây là lúc tốt nhất để tạo ra intellectual property.</p>
+              <p style="margin-bottom:16px;"><strong>Moon Nakshatra Shravana</strong> — "người lắng nghe". Bạn học bằng cách lắng nghe và quan sát thay vì chỉ đọc. Podcast, cuộc trò chuyện sâu, mentorship là những phương thức học tập hiệu quả nhất với bạn.</p>
+              <div class="source">nguồn: Vedic Astrology (Jyotish) — Natal Chart · Dasha · Yoga</div>
+            </div>
+            <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+              <h4 style="margin-bottom:12px;">Hỏi về Vedic</h4>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="s5-vedic-input" placeholder="VD: Saturn Dasha ảnh hưởng tới tôi thế nào?" style="flex:1;" onkeydown="if(event.key==='Enter')sendQA('s5-vedic')">
+                <button class="btn btn-gold btn-sm" onclick="sendQA('s5-vedic')">Gửi</button>
+              </div>
+              <div id="s5-vedic-result" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 DEEP DIVE -->
+<div id="s6" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">360Human</div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s4')">&#9689; Tổng Quan</li>
+        <li onclick="showScreen('s5')">&#11041; Biểu đồ hệ thống</li>
+        <li class="active" onclick="showScreen('s6')">&#9678; Phân tích sâu</li>
+        <li onclick="showScreen('s9')">&#9719; Lịch Vận</li>
+        <li onclick="showScreen('s10')">&#9651; Hành động</li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s7')">&#10022; Nâng cấp</li>
+        <li onclick="showScreen('s8')">&#9881; Cài đặt</li>
+      </ul>
+    </nav>
+    <div class="app-main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="hamburger" onclick="openMobileNav()">&#9776;</button>
+          <a href="#" style="color:var(--stone);font-size:14px;" onclick="showScreen('s4')">&#8592; Tổng Quan</a>
+          <span style="color:var(--border);">&#8250;</span>
+          <span style="font-weight:500;">Phân tích sâu</span>
+        </div>
+        <div class="topbar-right"><span class="badge badge-pro" id="s6-tier-badge">PRO</span></div>
+      </div>
+      <div style="display:flex;gap:0;" class="two-col">
+        <div style="flex:1;padding:32px 32px 80px 48px;border-right:1px solid var(--border);">
+          <h2 style="margin-bottom:8px;">Đặt câu hỏi cụ thể</h2>
+          <p class="muted" style="font-size:14px;margin-bottom:24px;">Mô tả tình huống thực tế của bạn — AI sẽ phân tích từ nhiều hệ thống</p>
+          <div style="margin-bottom:16px;">
+            <textarea id="s6-question" rows="4" placeholder="VD: Tôi đang phân vân giữa việc ở lại công ty hiện tại hay mở business riêng. Theo biểu đồ của tôi, thời điểm nào và hướng đi nào phù hợp hơn?" style="resize:vertical;"></textarea>
+          </div>
+          <button class="btn btn-gold btn-full" onclick="sendDeepDive()">Phân tích →</button>
+          <div style="margin-top:32px;">
+            <h4 style="margin-bottom:16px;color:var(--stone);font-size:14px;text-transform:uppercase;letter-spacing:0.5px;">Câu hỏi gợi ý</h4>
+            <div style="display:flex;flex-direction:column;gap:8px;" id="s6-suggestions">
+              <button class="btn btn-ghost" style="text-align:left;padding:12px 16px;font-size:14px;justify-content:flex-start;" onclick="s6FillQuestion(this)">Tại sao tôi hay tự phá hoại bản thân khi gần thành công?</button>
+              <button class="btn btn-ghost" style="text-align:left;padding:12px 16px;font-size:14px;justify-content:flex-start;" onclick="s6FillQuestion(this)">Đâu là mối quan hệ cảm xúc/nghề nghiệp phù hợp nhất với tôi?</button>
+              <button class="btn btn-ghost" style="text-align:left;padding:12px 16px;font-size:14px;justify-content:flex-start;" onclick="s6FillQuestion(this)">Năm 2026-2027 tôi nên ưu tiên điều gì?</button>
+              <button class="btn btn-ghost" style="text-align:left;padding:12px 16px;font-size:14px;justify-content:flex-start;" onclick="s6FillQuestion(this)">Tôi có phù hợp để làm lãnh đạo/entrepreneur không?</button>
+              <button class="btn btn-ghost" style="text-align:left;padding:12px 16px;font-size:14px;justify-content:flex-start;" onclick="s6FillQuestion(this)">Tại sao tôi có pattern lặp đi lặp lại trong các mối quan hệ?</button>
+            </div>
+          </div>
+          <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);">
+            <h4 style="margin-bottom:16px;color:var(--stone);font-size:14px;">Lịch sử phân tích</h4>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="padding:12px;background:var(--sand);border-radius:var(--radius-md);cursor:pointer;" onclick="s6LoadHistory(1)"><p style="font-size:13px;font-weight:500;">Tại sao tôi hay trì hoãn?</p><p class="muted" style="font-size:11px;margin-top:2px;">20/03/2026 · 4 hệ thống</p></div>
+              <div style="padding:12px;background:var(--sand);border-radius:var(--radius-md);cursor:pointer;" onclick="s6LoadHistory(2)"><p style="font-size:13px;font-weight:500;">Mối quan hệ nào phù hợp với tôi?</p><p class="muted" style="font-size:11px;margin-top:2px;">18/03/2026 · 5 hệ thống</p></div>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1.2;padding:32px 48px 32px 32px;" id="s6-result-panel">
+          <div id="s6-empty" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:48px;text-align:center;opacity:0.4;">
+            <div style="font-size:48px;">&#9678;</div>
+            <h3>Chọn câu hỏi hoặc nhập câu hỏi của bạn</h3>
+            <p class="muted" style="font-size:14px;">AI sẽ phân tích từ 5 hệ thống và đưa ra góc nhìn tổng hợp</p>
+          </div>
+          <div id="s6-loading" style="display:none;padding:32px 0;">
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--sand);border-radius:var(--radius-md);" id="s6-l1"><span style="font-size:16px;opacity:0.3;">&#11041;</span><span class="muted">Tử Vi đang phân tích...</span><div class="progress-bar" style="flex:1;"><div class="fill" style="width:0%" id="s6-p1"></div></div></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--sand);border-radius:var(--radius-md);" id="s6-l2"><span style="font-size:16px;opacity:0.3;">&#9671;</span><span class="muted">BaZi đang phân tích...</span><div class="progress-bar" style="flex:1;"><div class="fill" style="width:0%" id="s6-p2"></div></div></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--sand);border-radius:var(--radius-md);" id="s6-l3"><span style="font-size:16px;opacity:0.3;">&#9651;</span><span class="muted">Human Design đang phân tích...</span><div class="progress-bar" style="flex:1;"><div class="fill" style="width:0%" id="s6-p3"></div></div></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--sand);border-radius:var(--radius-md);" id="s6-l4"><span style="font-size:16px;opacity:0.3;">&#9675;</span><span class="muted">Số học đang phân tích...</span><div class="progress-bar" style="flex:1;"><div class="fill" style="width:0%" id="s6-p4"></div></div></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--sand);border-radius:var(--radius-md);" id="s6-l5"><span style="font-size:16px;opacity:0.3;">&#9734;</span><span class="muted">Vedic đang phân tích...</span><div class="progress-bar" style="flex:1;"><div class="fill" style="width:0%" id="s6-p5"></div></div></div>
+            </div>
+          </div>
+          <div id="s6-result" style="display:none;">
+            <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:20px;">
+              <div><h3 style="margin-bottom:4px;" id="s6-result-title">Phân tích</h3><div style="display:flex;gap:6px;flex-wrap:wrap;" id="s6-result-sources"><span class="badge-system">Tử Vi</span><span class="badge-system">BaZi</span><span class="badge-system">Human Design</span><span class="badge-system">Số học</span></div></div>
+              <button class="btn btn-ghost btn-sm" onclick="s6Reset()">Hỏi câu khác</button>
+            </div>
+            <div id="s6-result-body" class="reading-text" style="font-size:16px;line-height:1.9;"></div>
+            <div style="margin-top:24px;padding:16px;background:var(--sand);border-radius:var(--radius-lg);">
+              <h4 style="margin-bottom:12px;">Hành động đề xuất từ phân tích này</h4>
+              <div style="display:flex;flex-direction:column;gap:8px;" id="s6-actions">
+                <div style="display:flex;justify-content:space-between;align-items:start;padding:10px;background:var(--warm-white);border-radius:var(--radius-sm);"><div><strong style="font-size:14px;">Áp dụng quy tắc 2 phút</strong><br><span class="muted" style="font-size:13px;">Nếu mất ít hơn 2 phút — làm ngay</span></div><span class="badge-system">BaZi</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:start;padding:10px;background:var(--warm-white);border-radius:var(--radius-sm);"><div><strong style="font-size:14px;">Thực hành Sacral response hàng ngày</strong><br><span class="muted" style="font-size:13px;">Hỏi bản thân "Uh-huh hay Uh-uh?" trước mỗi task</span></div><span class="badge-system">HD</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 PRICING (2 tiers only) -->
+<div id="s7" class="screen">
+  <div style="min-height:100vh;padding:80px 48px 120px;">
+    <div style="text-align:center;margin-bottom:16px;">
+      <a href="#" style="color:var(--stone);font-size:14px;" onclick="showScreen('s4')">&#8592; Quay lại</a>
+    </div>
+    <div class="container-md" style="width:100%;">
+      <div style="text-align:center;margin-bottom:48px;">
+        <h1 style="margin-bottom:12px;">Mở khóa hành trình của bạn</h1>
+        <p class="muted" style="font-size:18px;">Một lần mua — lifetime access. Không subscription.</p>
+      </div>
+      <div style="display:flex;gap:24px;justify-content:center;margin-bottom:48px;flex-wrap:wrap;">
+        <!-- FREE -->
+        <div class="card" style="flex:1;min-width:280px;max-width:360px;">
+          <span class="badge badge-free" style="margin-bottom:16px;">FREE</span>
+          <div style="font-family:var(--font-heading);font-size:36px;font-weight:700;margin-bottom:4px;">0đ</div>
+          <p class="muted" style="margin-bottom:24px;font-size:14px;">Khám phá bản thân</p>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px;margin-bottom:28px;">
+            <li>&#10003; 2 chủ đề luận giải (~2.000 từ)</li>
+            <li>&#10003; 2 hành động nền móng</li>
+            <li>&#10003; Tháng hiện tại (Lịch Vận)</li>
+            <li style="color:var(--stone);">&#10007; 8 chủ đề còn lại</li>
+            <li style="color:var(--stone);">&#10007; 5 biểu đồ hệ thống</li>
+            <li style="color:var(--stone);">&#10007; Hỏi đáp AI</li>
+            <li style="color:var(--stone);">&#10007; Phân tích sâu</li>
+            <li style="color:var(--stone);">&#10007; Xuất PDF</li>
+          </ul>
+          <div style="text-align:center;color:var(--stone);font-size:13px;padding:12px;background:var(--sand);border-radius:var(--radius-md);">Gói hiện tại &#10003;</div>
+        </div>
+
+        <!-- PRO -->
+        <div class="card" style="flex:1;min-width:280px;max-width:360px;border:2px solid var(--gold);position:relative;">
+          <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--gold);color:white;padding:4px 20px;border-radius:var(--radius-full);font-size:12px;font-weight:600;white-space:nowrap;">Phổ biến nhất</div>
+          <span class="badge badge-pro" style="margin-bottom:16px;">PRO</span>
+          <div style="font-family:var(--font-heading);font-size:36px;font-weight:700;margin-bottom:4px;">199.000đ</div>
+          <p class="muted" style="margin-bottom:24px;font-size:14px;">Hiểu sâu &amp; hành động</p>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px;margin-bottom:28px;">
+            <li>&#10003; <strong>10 chủ đề</strong> luận giải (~10.000 từ)</li>
+            <li>&#10003; <strong>5 biểu đồ</strong> hệ thống chi tiết</li>
+            <li>&#10003; <strong>Hỏi đáp AI</strong> không giới hạn</li>
+            <li>&#10003; <strong>Phân tích sâu</strong> tình huống cụ thể</li>
+            <li>&#10003; <strong>Cả 3 tầng</strong> hành động</li>
+            <li>&#10003; <strong>Lifetime</strong> Lịch Vận</li>
+            <li>&#10003; <strong>Xuất PDF</strong> 36 trang</li>
+          </ul>
+          <button class="btn btn-gold btn-full btn-lg" onclick="openCheckout('pro')">Nâng cấp PRO</button>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <p class="muted" style="font-size:13px;max-width:520px;margin:0 auto 8px;">Mỗi gói áp dụng cho 1 hồ sơ. Thêm hồ sơ mới với cùng mức giá tại <a href="#" style="color:var(--gold);" onclick="showScreen('s8')">Cài đặt</a>.</p>
+        <p class="muted" style="font-size:13px;">Câu hỏi? <a href="mailto:support@360human.ai" style="color:var(--gold);">Liên hệ support →</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 PROFILE + SETTINGS -->
+<div id="s8" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">360Human</div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s4')">&#9689; Tổng Quan</li>
+        <li onclick="showScreen('s5')">&#11041; Biểu đồ hệ thống</li>
+        <li onclick="showScreen('s6')">&#9678; Phân tích sâu</li>
+        <li onclick="showScreen('s9')">&#9719; Lịch Vận</li>
+        <li onclick="showScreen('s10')">&#9651; Hành động</li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s7')">&#10022; Nâng cấp</li>
+        <li class="active" onclick="showScreen('s8')">&#9881; Cài đặt</li>
+      </ul>
+    </nav>
+    <div class="app-main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="hamburger" onclick="openMobileNav()">&#9776;</button>
+          <a href="#" style="color:var(--stone);" onclick="showScreen('s4')">&#8592; Tổng Quan</a>
+        </div>
+      </div>
+      <div class="container-md" style="padding-top:32px;padding-bottom:80px;">
+        <div class="card" style="margin-bottom:24px;display:flex;gap:24px;align-items:center;">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--gold-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:24px;color:var(--gold);font-weight:600;flex-shrink:0;">TN</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap;">
+              <strong style="font-size:18px;">Thảo Nguyễn</strong>
+              <span class="badge badge-free" id="s8-tier-badge">FREE</span>
+              <a href="#" style="font-size:13px;color:var(--gold);" onclick="openCheckout('pro');return false;" id="s8-upgrade-link">Nâng cấp PRO</a>
+            </div>
+            <p class="muted" style="font-size:14px;">thao.nguyen@email.com</p>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;"><h4>Dữ liệu sinh</h4><button class="btn btn-ghost btn-sm" onclick="toggleBirthEdit()">Chỉnh sửa</button></div>
+          <div id="birth-display"><p style="font-size:15px;">15/06/1997 · 14:30 · TP. Hồ Chí Minh</p><p class="muted" style="font-size:13px;margin-top:4px;">Thay đổi dữ liệu sinh sẽ tính toán lại toàn bộ biểu đồ</p></div>
+          <div id="birth-edit" style="display:none;margin-top:12px;">
+            <div style="display:flex;gap:8px;margin-bottom:8px;"><input type="number" placeholder="DD" value="15" style="width:70px;"><input type="number" placeholder="MM" value="06" style="width:70px;"><input type="number" placeholder="YYYY" value="1997" style="flex:1;"></div>
+            <div style="display:flex;gap:8px;margin-bottom:12px;"><input type="text" placeholder="HH:MM" value="14:30" style="flex:1;"><input type="text" placeholder="Thành phố" value="TP. Hồ Chí Minh" style="flex:2;"></div>
+            <div style="display:flex;gap:8px;"><button class="btn btn-gold btn-sm" onclick="toggleBirthEdit()">Lưu thay đổi</button><button class="btn btn-ghost btn-sm" onclick="toggleBirthEdit()">Hủy</button></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:24px;">
+          <h4 style="margin-bottom:16px;">Hồ sơ</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gold-bg);border-radius:var(--radius-sm);border:1px solid var(--gold);">
+              <span>&#9689;</span>
+              <div style="flex:1;"><strong>Thảo Nguyễn</strong><p class="muted" style="font-size:12px;">15/06/1997 · TP. HCM</p></div>
+              <span class="badge badge-free" id="s8-profile-badge">FREE</span>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="alert('Thêm hồ sơ mới: 199.000đ/hồ sơ (PRO)')">+ Thêm hồ sơ mới</button>
+          <p class="muted" style="font-size:12px;margin-top:8px;">Mỗi hồ sơ mới — phân tích độc lập với cùng mức giá</p>
+        </div>
+        <div class="card" style="margin-bottom:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><h4>Mật khẩu</h4><button class="btn btn-ghost btn-sm" onclick="togglePasswordForm()">Đổi mật khẩu</button></div>
+          <div class="password-form" id="password-form">
+            <div class="field" style="margin-top:16px;"><label>Mật khẩu hiện tại</label><input type="password" placeholder="••••••••"></div>
+            <div class="field"><label>Mật khẩu mới</label><input type="password" placeholder="Tối thiểu 8 ký tự"></div>
+            <div class="field"><label>Xác nhận mật khẩu mới</label><input type="password" placeholder="Nhập lại mật khẩu mới"></div>
+            <div style="display:flex;gap:8px;"><button class="btn btn-gold btn-sm" onclick="togglePasswordForm();alert('Mật khẩu đã được cập nhật!')">Lưu mật khẩu</button><button class="btn btn-ghost btn-sm" onclick="togglePasswordForm()">Hủy</button></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:24px;">
+          <h4 style="margin-bottom:16px;">Thông báo</h4>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;"><span style="font-size:15px;">Lịch Vận hàng tháng</span><input type="checkbox" checked style="width:auto;"></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;"><span style="font-size:15px;">Nhắc nhở hành động hàng tuần</span><input type="checkbox" style="width:auto;"></label>
+          </div>
+        </div>
+        <div class="card" style="border-color:var(--error);background:var(--error-bg);">
+          <h4 style="color:var(--error);margin-bottom:8px;">Vùng nguy hiểm</h4>
+          <p class="muted" style="font-size:13px;margin-bottom:12px;">Hành động này không thể hoàn tác</p>
+          <button class="btn btn-destructive btn-sm" onclick="confirmDeleteAccount()">Xóa tài khoản</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S9 LICH VAN (TIME ORACLE) -->
+<div id="s9" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">360Human</div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s4')">&#9689; Tổng Quan</li>
+        <li onclick="showScreen('s5')">&#11041; Biểu đồ hệ thống</li>
+        <li onclick="showScreen('s6')">&#9678; Phân tích sâu</li>
+        <li class="active" onclick="showScreen('s9')">&#9719; Lịch Vận</li>
+        <li onclick="showScreen('s10')">&#9651; Hành động</li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s7')">&#10022; Nâng cấp</li>
+        <li onclick="showScreen('s8')">&#9881; Cài đặt</li>
+      </ul>
+    </nav>
+    <div class="app-main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="hamburger" onclick="openMobileNav()">&#9776;</button>
+          <span style="font-weight:500;">Lịch Vận</span>
+          <span class="badge badge-free" id="s9-tier-badge">FREE</span>
+        </div>
+      </div>
+      <div id="s9-upsell" style="background:var(--gold-bg);border-bottom:1px solid var(--gold);padding:12px 48px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:14px;">Mở khóa Cuộc đời &amp; Năm với PRO</span>
+        <button class="btn btn-gold btn-sm" onclick="openCheckout('pro')">Nâng cấp</button>
+      </div>
+      <div style="padding:32px 48px 80px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;">
+          <span class="muted" style="font-size:14px;cursor:pointer;" id="bc-lifetime" onclick="s9GoLevel('lifetime')">Cuộc đời</span>
+          <span class="muted">›</span>
+          <span class="muted" style="font-size:14px;cursor:pointer;" id="bc-year" onclick="s9GoLevel('year')">2026</span>
+          <span class="muted">›</span>
+          <strong style="font-size:14px;" id="bc-month">Tháng 3</strong>
+        </div>
+        <!-- Layer 1: Lifetime (PRO only) -->
+        <div id="s9-layer1" style="display:none;margin-bottom:32px;">
+          <h3 style="margin-bottom:16px;">Bản đồ cuộc đời</h3>
+          <div style="position:relative;height:80px;background:var(--sand);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px;">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:35%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--stone);">Tuổi trẻ (0–27)</div>
+            <div style="position:absolute;left:35%;top:0;bottom:0;width:35%;background:var(--gold-bg);border-left:2px solid var(--gold);border-right:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;">Trưởng thành (27–54) ★</div>
+            <div style="position:absolute;right:0;top:0;bottom:0;width:30%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--stone);">Viên mãn (54+)</div>
+            <div style="position:absolute;left:37%;top:0;bottom:0;width:2px;background:var(--gold);"></div>
+            <div style="position:absolute;left:37%;top:-8px;transform:translateX(-50%);font-size:10px;background:var(--gold);color:white;padding:2px 6px;border-radius:var(--radius-full);">2026</div>
+          </div>
+          <div class="card" style="padding:16px;">
+            <h4 style="margin-bottom:8px;">Giai đoạn Trưởng thành (27–54)</h4>
+            <p style="font-size:15px;line-height:1.8;">Đây là giai đoạn xây dựng di sản. Saturn Return đầu tiên của bạn (28–29 tuổi) đã qua — giờ là lúc những nền móng bạn xây được thể hiện thực sự. Đại Vận Đinh Dậu đang chạy — mỗi năm trong 2024–2033 là một gạch nền quan trọng.</p>
+            <div class="source" style="margin-top:8px;">nguồn: BaZi (Đại Vận Đinh Dậu) · Vedic (Saturn Dasha)</div>
+          </div>
+        </div>
+        <!-- Layer 2: Year (PRO only) -->
+        <div id="s9-layer2" style="display:none;margin-bottom:32px;">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+            <span style="cursor:pointer;color:var(--stone);" onclick="alert('2025')">&#8592; 2025</span>
+            <h3>Năm 2026</h3>
+            <span style="cursor:pointer;color:var(--stone);" onclick="alert('2027')">2027 &#8594;</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;">
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T1')"><p style="font-size:13px;font-weight:500;">T1</p><p class="muted" style="font-size:11px;">&#9675;&#9675;&#9675;&#9675;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T2')"><p style="font-size:13px;font-weight:500;">T2</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9675;&#9675;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;border:2px solid var(--gold);background:var(--gold-bg);" onclick="s9SelectMonth('T3')"><p style="font-size:13px;font-weight:600;color:var(--gold);">T3 ★</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9679;&#9675;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T4')"><p style="font-size:13px;font-weight:500;">T4</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9679;&#9679;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T5')"><p style="font-size:13px;font-weight:500;">T5</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9679;&#9679;&#9679;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T6')"><p style="font-size:13px;font-weight:500;">T6</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9679;&#9675;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T7')"><p style="font-size:13px;font-weight:500;">T7</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9675;&#9675;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T8')"><p style="font-size:13px;font-weight:500;">T8</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9679;&#9679;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T9')"><p style="font-size:13px;font-weight:500;">T9</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9679;&#9675;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T10')"><p style="font-size:13px;font-weight:500;">T10</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9675;&#9675;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T11')"><p style="font-size:13px;font-weight:500;">T11</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9679;&#9679;&#9675;</p></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;" onclick="s9SelectMonth('T12')"><p style="font-size:13px;font-weight:500;">T12</p><p class="muted" style="font-size:11px;">&#9679;&#9679;&#9679;&#9679;&#9679;</p></div>
+          </div>
+          <p class="muted" style="font-size:12px;">&#9679; = mức năng lượng · ★ = tháng hiện tại</p>
+        </div>
+        <!-- Layer 3: Monthly (FREE sees this) -->
+        <div style="display:flex;gap:32px;" class="two-col">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+              <span style="cursor:pointer;color:var(--stone);" onclick="alert('Tháng 2')">&#8592; T2</span>
+              <h2>Tháng 3, 2026</h2>
+              <span style="cursor:pointer;color:var(--stone);" onclick="alert('Tháng 4')">T4 &#8594;</span>
+            </div>
+            <div class="card">
+              <h3 style="font-family:var(--font-heading);margin-bottom:16px;">Tháng của sự tập trung nội tâm</h3>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);"><span class="muted" style="font-size:14px;">Năng lượng</span><span style="font-size:16px;">&#9679;&#9679;&#9679;&#9675;&#9675;</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);"><span class="muted" style="font-size:14px;">Trọng tâm</span><span style="font-size:14px;font-weight:500;">Sự nghiệp &amp; Sáng tạo</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;"><span class="muted" style="font-size:14px;">Tuần cần chú ý</span><span style="font-size:14px;font-weight:500;color:var(--ember);">Tuần 3 (10–16)</span></div>
+              </div>
+              <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+                <p style="font-size:15px;line-height:1.8;">Đây là tháng Personal Year 9 gặp Monthly 3 — năng lượng của sự hoàn thành và kết thúc chu kỳ. Những gì bạn đã bắt đầu từ 2017 đang đến điểm thu hoạch. Tháng 3 với số 3 mang năng lượng sáng tạo và giao tiếp — hãy ưu tiên viết, nói chuyện, và chia sẻ ý tưởng.</p>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1.5;">
+            <table style="width:100%;border-collapse:collapse;text-align:center;">
+              <thead><tr style="color:var(--stone);font-size:13px;">
+                <td style="padding:8px;">T2</td><td style="padding:8px;">T3</td><td style="padding:8px;">T4</td>
+                <td style="padding:8px;">T5</td><td style="padding:8px;">T6</td><td style="padding:8px;">T7</td><td style="padding:8px;">CN</td>
+              </tr></thead>
+              <tbody>
+                <tr><td colspan="5" style="padding:4px;"></td><td style="padding:12px;cursor:pointer;" class="cal-day">1</td><td style="padding:12px;cursor:pointer;" class="cal-day">2</td></tr>
+                <tr style="background:var(--gold-bg);">
+                  <td style="padding:12px;cursor:pointer;" class="cal-day">3</td><td style="padding:12px;cursor:pointer;" class="cal-day">4</td><td style="padding:12px;cursor:pointer;" class="cal-day">5</td><td style="padding:12px;cursor:pointer;" class="cal-day">6</td><td style="padding:12px;cursor:pointer;" class="cal-day">7</td><td style="padding:12px;cursor:pointer;" class="cal-day">8</td><td style="padding:12px;cursor:pointer;" class="cal-day">9</td>
+                </tr>
+                <tr style="background:var(--ember-bg);">
+                  <td style="padding:12px;cursor:pointer;" class="cal-day">10</td><td style="padding:12px;cursor:pointer;" class="cal-day">11</td><td style="padding:12px;cursor:pointer;" class="cal-day">12</td><td style="padding:12px;cursor:pointer;" class="cal-day">13</td><td style="padding:12px;cursor:pointer;" class="cal-day">14</td><td style="padding:12px;cursor:pointer;" class="cal-day">15</td><td style="padding:12px;cursor:pointer;" class="cal-day">16</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px;font-weight:700;color:var(--gold);cursor:pointer;" class="cal-day">17</td><td style="padding:12px;cursor:pointer;" class="cal-day">18</td><td style="padding:12px;cursor:pointer;" class="cal-day">19</td><td style="padding:12px;cursor:pointer;" class="cal-day">20</td><td style="padding:12px;cursor:pointer;" class="cal-day">21</td><td style="padding:12px;cursor:pointer;" class="cal-day">22</td><td style="padding:12px;cursor:pointer;" class="cal-day">23</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px;cursor:pointer;" class="cal-day">24</td><td style="padding:12px;cursor:pointer;" class="cal-day">25</td><td style="padding:12px;cursor:pointer;" class="cal-day">26</td><td style="padding:12px;cursor:pointer;" class="cal-day">27</td><td style="padding:12px;cursor:pointer;" class="cal-day">28</td><td style="padding:12px;cursor:pointer;" class="cal-day">29</td><td style="padding:12px;cursor:pointer;" class="cal-day">30</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="card" style="margin-top:16px;">
+              <div class="source" style="margin-bottom:8px;">Tuần 17–23/03/2026</div>
+              <p style="font-size:15px;margin-bottom:8px;">Năng lượng tập trung cao — lý tưởng cho quyết định quan trọng. <span style="color:var(--gold);">★ Ngày 21 đặc biệt thuận lợi</span> cho khởi động và ký kết.</p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge-system">Tập trung</span><span class="badge-system">Sáng tạo</span><span class="badge-system">Kết nối</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S10 ACTIONS -->
+<div id="s10" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">360Human</div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s4')">&#9689; Tổng Quan</li>
+        <li onclick="showScreen('s5')">&#11041; Biểu đồ hệ thống</li>
+        <li onclick="showScreen('s6')">&#9678; Phân tích sâu</li>
+        <li onclick="showScreen('s9')">&#9719; Lịch Vận</li>
+        <li class="active" onclick="showScreen('s10')">&#9651; Hành động</li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s7')">&#10022; Nâng cấp</li>
+        <li onclick="showScreen('s8')">&#9881; Cài đặt</li>
+      </ul>
+    </nav>
+    <div class="app-main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="hamburger" onclick="openMobileNav()">&#9776;</button>
+          <span style="font-weight:500;">Hành động</span>
+          <span class="badge badge-free" id="s10-tier-badge">FREE</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:0;" class="two-col">
+        <div style="flex:1;padding:32px 32px 80px 48px;border-right:1px solid var(--border);">
+          <div style="text-align:center;margin-bottom:24px;">
+            <svg viewBox="0 0 300 200" style="width:260px;" id="s10-pyramid">
+              <polygon points="150,20 260,180 40,180" fill="none" stroke="var(--border)" stroke-width="2"/>
+              <line x1="90" y1="120" x2="210" y2="120" stroke="var(--border)" stroke-width="1.5"/>
+              <line x1="115" y1="70" x2="185" y2="70" stroke="var(--border)" stroke-width="1.5"/>
+              <polygon points="40,180 260,180 210,120 90,120" fill="var(--gold-bg)" fill-opacity="0.7" stroke="var(--gold)" stroke-width="2" id="pyr-base" style="cursor:pointer;" onclick="s10SelectLayer('base')"/>
+              <polygon points="90,120 210,120 185,70 115,70" fill="none" stroke="var(--border)" stroke-width="1.5" id="pyr-mid" style="cursor:pointer;" onclick="s10SelectLayer('mid')"/>
+              <polygon points="115,70 185,70 150,20" fill="none" stroke="var(--border)" stroke-width="1.5" id="pyr-top" style="cursor:pointer;" onclick="s10SelectLayer('top')"/>
+              <text x="150" y="43" text-anchor="middle" style="font-size:10px;fill:var(--stone);" id="pyr-top-label">Khai Phóng &#128274;</text>
+              <text x="150" y="100" text-anchor="middle" style="font-size:10px;fill:var(--stone);" id="pyr-mid-label">Nuôi Dưỡng &#128274;</text>
+              <text x="150" y="160" text-anchor="middle" style="font-size:12px;fill:var(--gold);font-weight:600;" id="pyr-base-label">Nền Móng ★</text>
+            </svg>
+          </div>
+          <div id="s10-actions-base">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><h3>Nền Móng</h3><span style="font-size:13px;color:var(--stone);" id="s10-base-count">0/2</span></div>
+            <div class="progress-bar" style="margin-bottom:16px;width:160px;"><div class="fill" style="width:0%" id="s10-base-progress"></div></div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="card" style="padding:16px;cursor:pointer;" onclick="s10SelectAction(1)" id="s10-action-1">
+                <div style="display:flex;align-items:start;gap:12px;"><input type="checkbox" style="width:auto;margin-top:4px;" onchange="updateActionProgress(this,1)"><div style="flex:1;"><strong style="font-size:14px;">1. Dành 10 phút mỗi sáng viết nhật ký</strong><p class="muted" style="font-size:13px;margin-top:4px;">Quan sát mâu thuẫn nội tại — viết ra, không phán xét</p></div><span class="badge-system">BaZi</span></div>
+              </div>
+              <div class="card" style="padding:16px;cursor:pointer;" onclick="s10SelectAction(2)" id="s10-action-2">
+                <div style="display:flex;align-items:start;gap:12px;"><input type="checkbox" style="width:auto;margin-top:4px;" onchange="updateActionProgress(this,2)"><div style="flex:1;"><strong style="font-size:14px;">2. Nói "không" ít nhất 1 lần/tuần</strong><p class="muted" style="font-size:13px;margin-top:4px;">Tham Lang dễ thu hút — nhưng cần chọn lọc</p></div><span class="badge-system">Tử Vi</span></div>
+              </div>
+            </div>
+          </div>
+          <div id="s10-actions-mid" style="display:none;margin-top:24px;">
+            <h3 style="margin-bottom:8px;">Nuôi Dưỡng</h3>
+            <div class="progress-bar" style="margin-bottom:16px;width:160px;"><div class="fill" style="width:33%"></div></div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="card" style="padding:16px;cursor:pointer;" onclick="s10SelectAction(3)"><div style="display:flex;align-items:start;gap:12px;"><input type="checkbox" checked style="width:auto;margin-top:4px;"><div style="flex:1;"><strong style="font-size:14px;">3. Thực hành Sacral response</strong><p class="muted" style="font-size:13px;margin-top:4px;">Trước mỗi cam kết lớn, hỏi bản thân: Uh-huh hay Uh-uh?</p></div><span class="badge-system">HD</span></div></div>
+              <div class="card" style="padding:16px;cursor:pointer;" onclick="s10SelectAction(4)"><div style="display:flex;align-items:start;gap:12px;"><input type="checkbox" style="width:auto;margin-top:4px;"><div style="flex:1;"><strong style="font-size:14px;">4. Xây dựng "năng lượng solo" hàng tuần</strong><p class="muted" style="font-size:13px;margin-top:4px;">Ít nhất 2 giờ/tuần hoàn toàn một mình, không điện thoại</p></div><span class="badge-system">HD</span></div></div>
+              <div class="card" style="padding:16px;cursor:pointer;" onclick="s10SelectAction(5)"><div style="display:flex;align-items:start;gap:12px;"><input type="checkbox" style="width:auto;margin-top:4px;"><div style="flex:1;"><strong style="font-size:14px;">5. Học một kỹ năng chuyên sâu mỗi quý</strong><p class="muted" style="font-size:13px;margin-top:4px;">Life Path 7 phát triển qua chiều sâu, không qua chiều rộng</p></div><span class="badge-system">Số học</span></div></div>
+            </div>
+          </div>
+          <div id="s10-actions-top" style="display:none;margin-top:24px;">
+            <h3 style="margin-bottom:8px;">Khai Phóng</h3>
+            <div class="progress-bar" style="margin-bottom:16px;width:160px;"><div class="fill" style="width:0%"></div></div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="card" style="padding:16px;cursor:pointer;border:2px solid var(--ink);" onclick="s10SelectAction(6)"><div style="display:flex;align-items:start;gap:12px;"><input type="checkbox" style="width:auto;margin-top:4px;"><div style="flex:1;"><strong style="font-size:14px;">6. Định nghĩa lại thành công theo điều kiện của bạn</strong><p class="muted" style="font-size:13px;margin-top:4px;">Viết một tuyên ngôn cá nhân — không so sánh với người khác</p></div><span class="badge-system">Tổng hợp</span></div></div>
+              <div class="card" style="padding:16px;cursor:pointer;" onclick="s10SelectAction(7)"><div style="display:flex;align-items:start;gap:12px;"><input type="checkbox" style="width:auto;margin-top:4px;"><div style="flex:1;"><strong style="font-size:14px;">7. Tạo ra một thứ để lại di sản</strong><p class="muted" style="font-size:13px;margin-top:4px;">Soul Urge 9 cần cống hiến — bắt đầu một dự án có ý nghĩa</p></div><span class="badge-system">Số học</span></div></div>
+            </div>
+          </div>
+          <div id="s10-upsell" style="margin-top:24px;padding:16px;background:var(--sand);border-radius:var(--radius-lg);text-align:center;">
+            <p class="muted" style="font-size:14px;">Mở khóa Nuôi Dưỡng &amp; Khai Phóng với <a href="#" style="color:var(--gold);" onclick="openCheckout('pro');return false;">PRO</a></p>
+          </div>
+        </div>
+        <div style="flex:1;padding:32px 48px 32px 32px;" id="s10-detail">
+          <div class="card" style="margin-bottom:16px;">
+            <h4 style="margin-bottom:12px;color:var(--stone);">WHAT — Từ đặc điểm nào?</h4>
+            <p style="font-size:15px;line-height:1.8;" id="s10-what-text">Chọn một hành động để xem giải thích chi tiết →</p>
+          </div>
+          <div class="card">
+            <h4 style="margin-bottom:12px;color:var(--stone);">WHY — Từ hệ thống nào?</h4>
+            <div id="s10-why-content"><p style="font-size:15px;line-height:1.8;color:var(--stone);">Chọn một hành động để xem nguồn gốc từ hệ thống nào →</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEV NAV BAR (tier toggle only) -->
+<div class="dev-nav">
+  <button class="tier-toggle free" id="tier-toggle-btn" onclick="cycleTier()">Tier: FREE</button>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div id="checkout-modal" class="co-modal-overlay">
+  <div class="co-modal">
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:24px;">
+      <div>
+        <h3 style="font-family:var(--font-heading);" id="co-title">Nâng cấp PRO</h3>
+        <p class="muted" style="font-size:14px;margin-top:4px;" id="co-subtitle">199.000đ · Lifetime · 1 hồ sơ</p>
+      </div>
+      <button onclick="closeCheckout()" style="background:none;border:none;font-size:28px;line-height:1;cursor:pointer;color:var(--stone);padding:0 4px;">&#215;</button>
+    </div>
+    <div id="co-step1">
+      <p style="font-size:15px;font-weight:500;margin-bottom:16px;">Chọn phương thức thanh toán:</p>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <button class="co-method-btn" onclick="coSelectMethod('vietqr')"><div class="co-icon">&#127974;</div><div><strong style="font-size:15px;">VietQR</strong><p class="muted" style="font-size:13px;margin-top:2px;">Chuyển khoản tức thì — hỗ trợ mọi ngân hàng</p></div></button>
+        <button class="co-method-btn" onclick="coSelectMethod('card')"><div class="co-icon">&#128179;</div><div><strong style="font-size:15px;">Thẻ ngân hàng</strong><p class="muted" style="font-size:13px;margin-top:2px;">Visa · Mastercard · JCB · Napas</p></div></button>
+      </div>
+      <p class="muted" style="font-size:12px;text-align:center;margin-top:20px;">&#128274; Thanh toán an toàn · Không lưu thông tin thẻ</p>
+    </div>
+    <div id="co-step2-vietqr" style="display:none;text-align:center;">
+      <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:var(--radius-lg);width:200px;height:200px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 100 100" width="168" height="168" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="8" width="28" height="28" fill="none" stroke="var(--ink)" stroke-width="3"/><rect x="13" y="13" width="18" height="18" fill="var(--ink)"/>
+          <rect x="64" y="8" width="28" height="28" fill="none" stroke="var(--ink)" stroke-width="3"/><rect x="69" y="13" width="18" height="18" fill="var(--ink)"/>
+          <rect x="8" y="64" width="28" height="28" fill="none" stroke="var(--ink)" stroke-width="3"/><rect x="13" y="69" width="18" height="18" fill="var(--ink)"/>
+          <rect x="42" y="8" width="5" height="5" fill="var(--ink)"/><rect x="50" y="8" width="5" height="5" fill="var(--ink)"/>
+          <rect x="42" y="16" width="5" height="10" fill="var(--ink)"/><rect x="50" y="20" width="5" height="5" fill="var(--ink)"/>
+          <rect x="8" y="42" width="10" height="5" fill="var(--ink)"/><rect x="22" y="42" width="10" height="5" fill="var(--ink)"/>
+          <rect x="42" y="36" width="10" height="5" fill="var(--ink)"/><rect x="56" y="36" width="10" height="5" fill="var(--ink)"/>
+          <rect x="42" y="44" width="5" height="5" fill="var(--ink)"/><rect x="50" y="42" width="10" height="5" fill="var(--ink)"/>
+          <rect x="64" y="44" width="10" height="5" fill="var(--ink)"/><rect x="78" y="44" width="14" height="5" fill="var(--ink)"/>
+          <rect x="42" y="52" width="10" height="5" fill="var(--ink)"/><rect x="56" y="52" width="5" height="5" fill="var(--ink)"/>
+          <rect x="64" y="56" width="10" height="5" fill="var(--ink)"/><rect x="78" y="56" width="5" height="5" fill="var(--ink)"/>
+          <rect x="42" y="64" width="5" height="5" fill="var(--ink)"/><rect x="50" y="64" width="10" height="5" fill="var(--ink)"/>
+          <rect x="64" y="64" width="5" height="5" fill="var(--ink)"/><rect x="72" y="70" width="5" height="10" fill="var(--ink)"/>
+          <rect x="80" y="64" width="12" height="5" fill="var(--ink)"/><rect x="42" y="72" width="5" height="10" fill="var(--ink)"/>
+          <rect x="50" y="78" width="10" height="5" fill="var(--ink)"/><rect x="64" y="78" width="5" height="14" fill="var(--ink)"/>
+          <rect x="80" y="78" width="12" height="14" fill="var(--ink)"/>
+        </svg>
+      </div>
+      <p style="font-weight:600;font-size:20px;margin-bottom:4px;" id="co-qr-amount">199.000đ</p>
+      <p class="muted" style="font-size:13px;margin-bottom:4px;">Vietcombank · 1023 4567 8901</p>
+      <p class="muted" style="font-size:13px;margin-bottom:20px;">Nội dung: <strong>360H TN</strong></p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">
+        <div style="width:9px;height:9px;border-radius:50%;background:var(--stone);animation:copulse 1.4s infinite;"></div>
+        <div style="width:9px;height:9px;border-radius:50%;background:var(--stone);animation:copulse 1.4s 0.45s infinite;"></div>
+        <div style="width:9px;height:9px;border-radius:50%;background:var(--stone);animation:copulse 1.4s 0.9s infinite;"></div>
+        <span class="muted" style="font-size:14px;margin-left:6px;">Đang chờ xác nhận...</span>
+      </div>
+      <p class="muted" style="font-size:12px;margin-bottom:20px;">QR hết hạn sau <strong id="co-countdown">15:00</strong></p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" onclick="coSimulateSuccess()">&#10003; Mô phỏng: Thành công</button>
+        <button class="btn btn-ghost btn-sm" onclick="coSimulateFailure()">&#10007; Mô phỏng: Thất bại</button>
+      </div>
+    </div>
+    <div id="co-step2-card" style="display:none;">
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Số thẻ</label><input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="coFormatCard(this)" id="co-card-num"></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Tên chủ thẻ</label><input type="text" placeholder="NGUYEN VAN A" style="text-transform:uppercase;"></div>
+      <div style="display:flex;gap:12px;margin-bottom:24px;">
+        <div style="flex:1;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Hết hạn</label><input type="text" placeholder="MM/YY" maxlength="5" oninput="coFormatExpiry(this)"></div>
+        <div style="flex:1;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">CVV</label><input type="password" placeholder="•••" maxlength="3"></div>
+      </div>
+      <button class="btn btn-gold btn-full btn-lg" id="co-card-pay-btn" onclick="coSubmitCard()">Thanh toán 199.000đ</button>
+      <p class="muted" style="font-size:12px;text-align:center;margin-top:12px;">&#128274; Thanh toán bảo mật · SSL 256-bit</p>
+    </div>
+    <div id="co-step3-success" style="display:none;text-align:center;padding:8px 0;">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--success-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;color:var(--success);">&#10003;</div>
+      <h3 style="font-family:var(--font-heading);margin-bottom:8px;" id="co-success-title">Nâng cấp thành công!</h3>
+      <p class="muted" style="margin-bottom:6px;" id="co-success-desc">Chào mừng bạn đến với <strong>360Human PRO</strong>.</p>
+      <p class="muted" style="font-size:13px;margin-bottom:28px;">Mã giao dịch: <code style="font-family:var(--font-mono);">#360H-20260321-4822</code></p>
+      <button class="btn btn-gold btn-full btn-lg" onclick="closeCheckout();showScreen('s4')">Bắt đầu khám phá →</button>
+    </div>
+    <div id="co-step3-failure" style="display:none;text-align:center;padding:8px 0;">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--error-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;color:var(--error);">&#10007;</div>
+      <h3 style="font-family:var(--font-heading);margin-bottom:8px;">Thanh toán thất bại</h3>
+      <p class="muted" style="margin-bottom:28px;" id="co-error-msg">Giao dịch không thể hoàn thành. Vui lòng thử lại.</p>
+      <button class="btn btn-gold btn-full" style="margin-bottom:12px;" onclick="coRetry()">Thử lại</button>
+      <p style="font-size:13px;color:var(--stone);">Cần hỗ trợ? <a href="mailto:support@360human.ai" style="color:var(--gold);">Liên hệ →</a></p>
+    </div>
+    <div id="co-indicators" style="display:flex;justify-content:center;gap:7px;margin-top:24px;">
+      <div id="co-ind-1" style="width:8px;height:8px;border-radius:50%;background:var(--ink);transition:background 0.2s;"></div>
+      <div id="co-ind-2" style="width:8px;height:8px;border-radius:50%;background:var(--border);transition:background 0.2s;"></div>
+      <div id="co-ind-3" style="width:8px;height:8px;border-radius:50%;background:var(--border);transition:background 0.2s;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div id="forgot-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;align-items:center;justify-content:center;padding:20px;">
+  <div class="co-modal" style="max-width:420px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <h3 style="font-family:var(--font-heading);">Quên mật khẩu</h3>
+      <button onclick="closeForgotPassword()" style="background:none;border:none;font-size:28px;cursor:pointer;color:var(--stone);">&#215;</button>
+    </div>
+    <div id="forgot-step1">
+      <p class="muted" style="font-size:14px;margin-bottom:20px;">Nhập email của bạn. Chúng tôi sẽ gửi link đặt lại mật khẩu.</p>
+      <div class="field"><label>Email</label><input type="email" id="forgot-email" placeholder="email@example.com"></div>
+      <button class="btn btn-gold btn-full" onclick="sendForgotPassword()">Gửi link đặt lại</button>
+    </div>
+    <div id="forgot-step2" style="display:none;text-align:center;padding:16px 0;">
+      <div style="font-size:48px;margin-bottom:16px;">&#128236;</div>
+      <h3 style="margin-bottom:8px;">Kiểm tra email của bạn</h3>
+      <p class="muted" style="font-size:14px;margin-bottom:24px;">Chúng tôi đã gửi link đặt lại mật khẩu đến <strong id="forgot-email-display"></strong></p>
+      <button class="btn btn-ghost btn-full" onclick="closeForgotPassword()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE NAV OVERLAY -->
+<div class="mob-overlay" id="mob-overlay" onclick="closeMobileNav()"></div>
+<div class="mob-sidebar" id="mob-sidebar">
+  <button class="mob-close" onclick="closeMobileNav()">&#215;</button>
+  <div style="padding:24px 24px 0;">
+    <div style="font-family:var(--font-heading);font-size:20px;font-weight:600;margin-bottom:24px;">360Human</div>
+    <ul style="list-style:none;">
+      <li style="padding:12px 0;cursor:pointer;font-size:16px;border-bottom:1px solid var(--border);" onclick="showScreen('s4');closeMobileNav()">&#9689; Tổng Quan</li>
+      <li style="padding:12px 0;cursor:pointer;font-size:16px;border-bottom:1px solid var(--border);" onclick="showScreen('s5');closeMobileNav()">&#11041; Biểu đồ hệ thống</li>
+      <li style="padding:12px 0;cursor:pointer;font-size:16px;border-bottom:1px solid var(--border);" onclick="showScreen('s6');closeMobileNav()">&#9678; Phân tích sâu</li>
+      <li style="padding:12px 0;cursor:pointer;font-size:16px;border-bottom:1px solid var(--border);" onclick="showScreen('s9');closeMobileNav()">&#9719; Lịch Vận</li>
+      <li style="padding:12px 0;cursor:pointer;font-size:16px;border-bottom:1px solid var(--border);" onclick="showScreen('s10');closeMobileNav()">&#9651; Hành động</li>
+      <li style="padding:12px 0;cursor:pointer;font-size:16px;border-bottom:1px solid var(--border);" onclick="showScreen('s7');closeMobileNav()">&#10022; Nâng cấp</li>
+      <li style="padding:12px 0;cursor:pointer;font-size:16px;" onclick="showScreen('s8');closeMobileNav()">&#9881; Cài đặt</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+/* ═══ GLOBAL STATE ═══ */
+let appTier = 'FREE'; // 'FREE' | 'PRO'
+let _coTimer = null;
+let _coPlan = 'pro';
+
+/* ═══ SCREEN NAVIGATION ═══ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+/* ═══ AUTH TABS ═══ */
+function switchTab2(which) {
+  document.getElementById('register').style.display = which === 'register' ? 'block' : 'none';
+  document.getElementById('login').style.display    = which === 'login'    ? 'block' : 'none';
+  document.getElementById('tab-register').classList.toggle('active', which === 'register');
+  document.getElementById('tab-login').classList.toggle('active', which === 'login');
+}
+
+/* ═══ ONBOARDING ═══ */
+function selectGender(btn, val) {
+  document.querySelectorAll('#gender-group button').forEach(b => {
+    b.classList.remove('btn-gold'); b.classList.add('btn-ghost');
+  });
+  btn.classList.remove('btn-ghost'); btn.classList.add('btn-gold');
+  updateProgress();
+}
+
+function updateProgress() {
+  const checks = [
+    document.getElementById('ob-name')?.value.trim(),
+    document.querySelector('#gender-group .btn-gold'),
+    document.getElementById('ob-day')?.value.trim(),
+    document.getElementById('ob-month')?.value.trim(),
+    document.getElementById('ob-year')?.value.trim(),
+    document.getElementById('ob-time')?.value.trim() || document.getElementById('ob-no-time')?.checked,
+    document.getElementById('ob-city')?.value.trim()
+  ];
+  const filled = checks.filter(Boolean).length;
+  const pct = Math.round((filled / checks.length) * 100);
+  document.getElementById('onboard-progress').style.width = pct + '%';
+  document.getElementById('onboard-step-label').textContent = filled + ' / ' + checks.length + ' hoàn thành';
+}
+
+function showLoading() {
+  const overlay = document.getElementById('loading-overlay');
+  overlay.style.display = 'flex';
+  const systems = [
+    { name: 'Số học', icon: '○' },
+    { name: 'BaZi', icon: '◇' },
+    { name: 'Tử Vi', icon: '⬡' },
+    { name: 'Vedic', icon: '☆' },
+    { name: 'Human Design', icon: '△' }
+  ];
+  const container = document.getElementById('loading-layers');
+  container.innerHTML = '';
+  systems.forEach((sys, i) => {
+    const el = document.createElement('div');
+    el.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:var(--sand);transition:all 0.5s;';
+    el.innerHTML = '<span style="font-size:20px;opacity:0.3;">' + sys.icon + '</span><span style="color:var(--stone);flex:1;">' + sys.name + '</span><div style="width:120px;"><div class="progress-bar"><div class="fill" style="width:0%"></div></div></div>';
+    container.appendChild(el);
+    setTimeout(() => {
+      el.style.background = 'var(--gold-bg)';
+      el.querySelector('.fill').style.width = '100%';
+      el.querySelector('span').style.opacity = '1';
+      el.querySelector('span').style.color = 'var(--gold)';
+      el.querySelectorAll('span')[1].style.color = 'var(--ink)';
+      el.querySelectorAll('span')[1].style.fontWeight = '500';
+    }, (i + 1) * 700);
+  });
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    showScreen('s4');
+  }, 4200);
+}
+
+/* ═══ ACCORDION ═══ */
+function toggleAccordion(header) {
+  const item = header.parentElement;
+  if (item.classList.contains('locked')) return;
+  const wasOpen = item.classList.contains('open');
+  item.closest('.app-main').querySelectorAll('.accordion-item:not(.locked)').forEach(a => a.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+function handleLockedTopic(item, n) {
+  if (item.classList.contains('locked')) { openCheckout('pro'); return; }
+  const header = item.querySelector('.accordion-header');
+  toggleAccordion(header);
+}
+
+/* ═══ S5 SYSTEM TABS ═══ */
+function switchS5Tab(tabEl, panelId) {
+  document.querySelectorAll('#s5-tabs .tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+  document.querySelectorAll('#s5 .tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + panelId).classList.add('active');
+  const names = {'tu-vi':'Tử Vi','bazi':'BaZi','hd':'Human Design','numerology':'Số học','vedic':'Vedic'};
+  document.getElementById('s5-breadcrumb').textContent = names[panelId];
+}
+
+function goToChart(tab) {
+  if (appTier === 'FREE') { openCheckout('pro'); return; }
+  showScreen('s5');
+  const tabEl = document.querySelector('#s5-tabs [data-tab="' + tab + '"]');
+  if (tabEl) switchS5Tab(tabEl, tab);
+}
+
+/* ═══ Q&A SIMULATION ═══ */
+const qaResponses = {
+  default: 'Dựa trên biểu đồ của bạn — với Canh Kim Nhật Chủ trong BaZi và Profile 4/6 trong Human Design — câu hỏi này chạm đến một pattern rất cốt lõi. Kim gặp lửa đôi Ngọ tạo ra áp lực liên tục đòi hỏi sự hoàn hảo trước khi hành động. Profile 4/6 (Opportunist/Role Model) cần cảm thấy an toàn trong nền tảng trước khi mạo hiểm. Kết hợp lại, đây là cơ chế bảo vệ tiến hóa — không phải điểm yếu. Hành động đề xuất: Thực hành "done is better than perfect" bằng cách đặt deadline cứng 72 giờ cho mọi quyết định nhỏ.',
+  'trihoai': 'Trì hoãn của bạn không phải lười biếng — đây là cơ chế Kiêu Thần trong BaZi (Can Kiêu tọa Ngọ). Canh Kim khi gặp Hỏa mạnh có xu hướng "chờ điều kiện hoàn hảo" trước khi hành động. Trong Human Design, Will Center không xác định của bạn nghĩa là bạn không có áp lực nội tại tự nhiên — cần tạo ra cấu trúc bên ngoài. Giải pháp: Thay "tôi phải làm thật tốt" bằng "tôi thử xem sao" — giảm áp lực tự áp đặt.',
+  'quanhe': 'Với Profile 4/6 và Emotional Authority, bạn cần thời gian cảm xúc để ra quyết định trong quan hệ — đừng ép bản thân quyết định ngay. Người phù hợp nhất là những ai có tư duy rõ ràng (compatible với Life Path 7 của bạn) và cho bạn không gian một mình mà không cảm thấy bị từ chối.',
+  'diem-manh': 'Điểm mạnh cốt lõi: Tư duy hệ thống bậc cao (Defined Ajna + Life Path 7), khả năng kết nối ý tưởng từ nhiều lĩnh vực (Profile 4/6 + Expression 3), và bền bỉ phi thường khi cam kết (Canh Kim — kim loại cứng nhất). Đây là tổ hợp hiếm gặp của nhà tư tưởng-truyền đạt.'
+};
+
+function getQAResponse(question) {
+  const q = question.toLowerCase();
+  if (q.includes('trì hoãn') || q.includes('chậm') || q.includes('delay')) return qaResponses['trihoai'];
+  if (q.includes('quan hệ') || q.includes('tình cảm') || q.includes('yêu') || q.includes('bạn đời')) return qaResponses['quanhe'];
+  if (q.includes('điểm mạnh') || q.includes('tài năng') || q.includes('giỏi')) return qaResponses['diem-manh'];
+  return qaResponses.default;
+}
+
+function sendQA(inputId) {
+  const inputEl = document.getElementById(inputId + '-input');
+  const resultEl = document.getElementById(inputId + '-result');
+  if (!inputEl || !resultEl) return;
+  const question = inputEl.value.trim();
+  if (!question) return;
+  inputEl.disabled = true;
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '<div class="qa-loading"><div class="qa-dot"></div><div class="qa-dot"></div><div class="qa-dot"></div><span class="muted" style="font-size:13px;margin-left:8px;">Đang phân tích...</span></div>';
+  setTimeout(() => {
+    const resp = getQAResponse(question);
+    resultEl.innerHTML = '<div class="qa-response"></div>';
+    const textEl = resultEl.querySelector('.qa-response');
+    let i = 0;
+    function typeChar() {
+      if (i < resp.length) {
+        textEl.innerHTML = resp.substring(0, i + 1) + '<span class="qa-cursor"></span>';
+        i++;
+        setTimeout(typeChar, 18);
+      } else { textEl.innerHTML = resp; }
+    }
+    typeChar();
+    inputEl.disabled = false;
+    inputEl.value = '';
+  }, 1500);
+}
+
+function fillQA(screenId, text) {
+  const el = document.getElementById(screenId + '-qa-input');
+  if (el) { el.value = text; el.focus(); }
+}
+
+/* ═══ S6 DEEP DIVE ═══ */
+const deepDiveResponses = {
+  'self-sabotage': 'Đây là pattern Kiêu Thần trong BaZi — khi Canh Kim gần đến đỉnh, Kiêu Thần (Can Thực/Thương) cản trở bằng cách tạo ra nghi ngờ bản thân. Trong Human Design, Will Center không xác định hấp thu năng lượng willpower từ người xung quanh — khi một mình, willpower giảm đột ngột ngay trước finish line. Giải pháp: Tạo "accountability partner" cho giai đoạn nước rút cuối cùng của mọi dự án lớn.',
+  'leader': 'Biểu đồ của bạn cho thấy bạn có tố chất lãnh đạo — nhưng theo kiểu của Profile 4/6: dẫn dắt bằng ví dụ và sự tin tưởng, không phải bằng quyền lực. Tham Lang miếu địa (Tử Vi) tạo sức ảnh hưởng tự nhiên. Manifesting Generator (HD) thực ra rất phù hợp làm entrepreneur vì cần làm nhiều thứ song song. Saturn Dasha hiện tại ủng hộ việc xây dựng doanh nghiệp nếu bạn sẵn sàng đi chậm và chắc.',
+  'default': 'Dựa trên phân tích tổng hợp từ 5 hệ thống — BaZi, Tử Vi, Human Design, Số học, và Vedic — câu hỏi này liên quan đến một pattern cốt lõi trong biểu đồ của bạn. Canh Kim Nhật Chủ gặp lửa đôi Ngọ tạo ra áp lực liên tục đòi hỏi sự chuyển hóa. Kết hợp với Profile 4/6 trong Human Design và Life Path 7 trong Số học, bạn được thiết kế để trả lời những câu hỏi sâu sắc — nhưng cần thời gian và không gian để tìm thấy câu trả lời thật sự. Hành động cụ thể: Tạo ra một nghi thức suy nghĩ hàng ngày (10–15 phút) — không có điện thoại, không có input bên ngoài. Đây là khi Ajna Center defined của bạn hoạt động tốt nhất.'
+};
+
+function s6FillQuestion(btn) {
+  document.getElementById('s6-question').value = btn.textContent.trim();
+  document.getElementById('s6-question').focus();
+}
+
+function s6LoadHistory(n) {
+  const questions = ['Tại sao tôi hay trì hoãn?', 'Mối quan hệ nào phù hợp với tôi?'];
+  document.getElementById('s6-question').value = questions[n-1];
+  sendDeepDive();
+}
+
+function s6Reset() {
+  document.getElementById('s6-result').style.display = 'none';
+  document.getElementById('s6-loading').style.display = 'none';
+  document.getElementById('s6-empty').style.display = 'flex';
+  document.getElementById('s6-question').value = '';
+}
+
+function sendDeepDive() {
+  const q = document.getElementById('s6-question').value.trim();
+  if (!q) return;
+  document.getElementById('s6-empty').style.display = 'none';
+  document.getElementById('s6-result').style.display = 'none';
+  document.getElementById('s6-loading').style.display = 'block';
+  const bars = [1,2,3,4,5];
+  bars.forEach((i, idx) => {
+    setTimeout(() => {
+      const bar = document.getElementById('s6-p' + i);
+      const layer = document.getElementById('s6-l' + i);
+      if (bar) { bar.style.width = '100%'; bar.style.transition = 'width 0.6s'; }
+      if (layer) { layer.style.background = 'var(--gold-bg)'; }
+    }, idx * 600);
+  });
+  setTimeout(() => {
+    document.getElementById('s6-loading').style.display = 'none';
+    document.getElementById('s6-result').style.display = 'block';
+    document.getElementById('s6-result-title').textContent = 'Phân tích: ' + (q.length > 60 ? q.substring(0,60) + '...' : q);
+    const qLower = q.toLowerCase();
+    let resp = deepDiveResponses.default;
+    if (qLower.includes('tự phá hoại') || qLower.includes('gần thành công')) resp = deepDiveResponses['self-sabotage'];
+    if (qLower.includes('lãnh đạo') || qLower.includes('entrepreneur') || qLower.includes('business')) resp = deepDiveResponses['leader'];
+    document.getElementById('s6-result-body').innerHTML = '<p>' + resp + '</p>';
+    bars.forEach(i => {
+      const p = document.getElementById('s6-p' + i);
+      const l = document.getElementById('s6-l' + i);
+      if (p) { p.style.width = '0%'; p.style.transition = 'none'; }
+      if (l) { l.style.background = 'var(--sand)'; }
+    });
+  }, 3200);
+}
+
+/* ═══ S9 TIME ORACLE ═══ */
+function s9GoLevel(level) {
+  if (appTier === 'FREE') { openCheckout('pro'); return; }
+}
+
+function s9SelectMonth(m) {
+  alert('Tháng ' + m + ': Xem chi tiết tháng này — tính năng drill-down đầy đủ trong production');
+}
+
+/* ═══ S10 ACTIONS ═══ */
+const actionData = {
+  1: { what: 'Canh Kim Nhật Chủ gặp lửa đôi Ngọ — bạn có xu hướng xử lý quá nhiều trong đầu mà không xả ra. Viết nhật ký là cách "thoát nhiệt" cho hệ thống Kim-Hỏa của bạn.', why: 'BaZi — Canh Kim cần Thủy để điều hòa. Viết nhật ký kích hoạt hành Thủy (ngôn từ, suy nghĩ có hệ thống) trong cuộc sống hàng ngày.', system: 'BaZi' },
+  2: { what: 'Tham Lang miếu địa tại Cung Mệnh tạo sức hút tự nhiên — người và cơ hội tìm đến bạn liên tục. Nếu không học cách từ chối, bạn sẽ phân tán năng lượng và không đạt được điều nào sâu sắc.', why: 'Tử Vi — Tham Lang là sao đa tài nhưng dễ phân tán. Kỷ luật chọn lọc là cách khai thác Tham Lang ở mức cao nhất.', system: 'Tử Vi' },
+  3: { what: 'Manifesting Generator với Emotional Authority cần thời gian cảm xúc để ra quyết định đúng. Sacral response là "cảm giác ruột" — uh-huh (có) hoặc uh-uh (không) — đây là la bàn nội tại chính xác nhất của bạn.', why: 'Human Design — Manifesting Generator phản ứng với Sacral Center. Bỏ qua Sacral = quyết định sai. Emotional Authority yêu cầu thêm thời gian để cảm xúc lắng đọng.', system: 'HD' },
+  4: { what: 'Manifesting Generator cần thời gian solo để phân biệt năng lượng nào là của mình vs của người khác. Sau những buổi xã hội, cơ thể bạn cần reset hoàn toàn.', why: 'Human Design — Sacral undefined khuếch đại năng lượng từ môi trường. Thời gian solo là thiết yếu, không phải xa xỉ.', system: 'HD' },
+  5: { what: 'Life Path 7 được thiết kế để đi sâu vào một lĩnh vực, không mở rộng liên tục. Mỗi kỹ năng chuyên sâu bạn học tạo ra một "tầng" mới của sự hiểu biết.', why: 'Số học — Life Path 7 (Seeker) phát triển qua chiều sâu và sự nghiên cứu. Khác với Life Path 3 (bề rộng), số 7 cần đào sâu để tỏa sáng.', system: 'Số học' },
+  6: { what: 'Soul Urge 9 cho thấy ở cấp độ sâu nhất, bạn muốn cống hiến và để lại di sản có ý nghĩa. Tất cả hành động khác trong pyramid đều dẫn đến điểm này.', why: 'Số học — Soul Urge 9 là số của sự hoàn thành chu kỳ và cống hiến nhân loại. Cần được sống có ý thức để tránh cảm giác rỗng tuếch dù thành công vật chất.', system: 'Số học' },
+  7: { what: 'Scorpio Ascendant (Vedic) kết hợp Profile 4/6 (HD) tạo ra người để lại dấu ấn sâu sắc qua sự biến đổi. Di sản của bạn là những người bạn giúp chuyển hóa.', why: 'Vedic + HD — Saturn Dasha (2021–2040) là thời gian lý tưởng để bắt đầu dự án di sản. Saturn thưởng kỷ luật và tầm nhìn dài hạn.', system: 'Tổng hợp' }
+};
+
+function s10SelectAction(n) {
+  const data = actionData[n];
+  if (!data) return;
+  document.getElementById('s10-what-text').innerHTML = data.what;
+  document.getElementById('s10-why-content').innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span class="badge-system">' + data.system + '</span><span style="font-size:15px;font-weight:500;">' + data.system + ' Analysis</span></div><p style="font-size:15px;line-height:1.8;">' + data.why + '</p>';
+  document.querySelectorAll('[id^=s10-action-]').forEach(el => el.style.border = '');
+  const el = document.getElementById('s10-action-' + n);
+  if (el) el.style.border = '2px solid var(--gold)';
+}
+
+function s10SelectLayer(layer) {
+  if (layer !== 'base' && appTier === 'FREE') { openCheckout('pro'); return; }
+  document.getElementById('s10-actions-base').style.display = layer === 'base' ? 'block' : 'none';
+  document.getElementById('s10-actions-mid').style.display  = layer === 'mid'  ? 'block' : 'none';
+  document.getElementById('s10-actions-top').style.display  = layer === 'top'  ? 'block' : 'none';
+  ['base','mid','top'].forEach(l => {
+    const el = document.getElementById('pyr-' + l);
+    if (!el) return;
+    if (l === layer) { el.setAttribute('fill', 'var(--gold-bg)'); el.setAttribute('stroke', 'var(--gold)'); }
+    else { el.setAttribute('fill', 'none'); el.setAttribute('stroke', 'var(--border)'); }
+  });
+  document.getElementById('pyr-base').setAttribute('fill', 'var(--gold-bg)');
+}
+
+function updateActionProgress(checkbox, n) {
+  const checked = document.querySelectorAll('#s10-actions-base input[type=checkbox]:checked').length;
+  const total = document.querySelectorAll('#s10-actions-base input[type=checkbox]').length;
+  document.getElementById('s10-base-count').textContent = checked + '/' + total;
+  document.getElementById('s10-base-progress').style.width = (checked / total * 100) + '%';
+}
+
+/* ═══ TIER STATE SYSTEM (FREE | PRO only) ═══ */
+function applyTierState(tier) {
+  appTier = tier;
+  updateTierUI();
+}
+
+function updateTierUI() {
+  const isPro = appTier === 'PRO';
+  const tierLabel = appTier;
+  const badgeClass = isPro ? 'badge-pro' : 'badge-free';
+
+  ['s4-tier-badge','s5-tier-badge','s6-tier-badge','s8-tier-badge','s9-tier-badge','s10-tier-badge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'badge ' + badgeClass;
+    el.textContent = tierLabel;
+  });
+  const s8badge = document.getElementById('s8-tier-badge');
+  if (s8badge) { s8badge.className = 'badge ' + badgeClass; s8badge.textContent = tierLabel; }
+  const s8profile = document.getElementById('s8-profile-badge');
+  if (s8profile) { s8profile.className = 'badge ' + badgeClass; s8profile.textContent = tierLabel; }
+  const s8upgrade = document.getElementById('s8-upgrade-link');
+  if (s8upgrade) s8upgrade.style.display = isPro ? 'none' : 'inline';
+
+  // S4: PRO Banner
+  document.getElementById('s4-pro-banner').style.display = isPro ? 'block' : 'none';
+
+  // S4: Progress bar
+  document.getElementById('s4-progress-fill').style.width = isPro ? '100%' : '20%';
+  document.getElementById('s4-progress-label').innerHTML = isPro
+    ? '10/10 chủ đề — <span style="color:var(--success);">Đã mở khóa ✓</span>'
+    : "2/10 chủ đề — <a href='#' style='color:var(--gold);' onclick='showScreen(\"s7\")'>Mở khóa thêm 8 với PRO</a>";
+
+  // S4: PDF export — available in PRO
+  const pdfBtn = document.getElementById('s4-pdf-btn');
+  if (isPro) {
+    pdfBtn.removeAttribute('disabled');
+    pdfBtn.style.opacity = '1';
+    pdfBtn.style.cursor = 'pointer';
+    pdfBtn.textContent = 'Xuất PDF';
+    pdfBtn.onclick = () => alert('Đang tạo PDF 36 trang... (production feature)');
+  } else {
+    pdfBtn.setAttribute('disabled', true);
+    pdfBtn.style.opacity = '0.4';
+    pdfBtn.style.cursor = 'not-allowed';
+    pdfBtn.innerHTML = 'Xuất PDF &#128274;';
+  }
+
+  // S4: Unlock topics 3-10
+  for (let n = 3; n <= 10; n++) {
+    const item = document.getElementById('topic-' + n);
+    const lock  = document.getElementById('lock-' + n);
+    if (!item) continue;
+    if (isPro) { item.classList.remove('locked'); if (lock) lock.style.display = 'none'; }
+    else       { item.classList.add('locked');    if (lock) lock.style.display = ''; }
+  }
+
+  // S4: Q&A
+  document.getElementById('s4-qa-locked').style.display = isPro ? 'none'  : 'block';
+  document.getElementById('s4-qa-active').style.display = isPro ? 'block' : 'none';
+
+  // S4: Charts
+  document.querySelectorAll('.chart-lock-badge').forEach(el => el.style.display = isPro ? 'none' : '');
+  document.querySelectorAll('.chart-open-btn').forEach(el => el.style.display = isPro ? 'inline' : 'none');
+  document.getElementById('s4-chart-cta-locked').style.display   = isPro ? 'none'  : 'block';
+  document.getElementById('s4-chart-cta-unlocked').style.display = isPro ? 'block' : 'none';
+
+  // S9: Upsell + Layers
+  document.getElementById('s9-upsell').style.display   = isPro ? 'none'  : 'flex';
+  document.getElementById('s9-layer1').style.display   = isPro ? 'block' : 'none';
+  document.getElementById('s9-layer2').style.display   = isPro ? 'block' : 'none';
+  const bcLifetime = document.getElementById('bc-lifetime');
+  const bcYear     = document.getElementById('bc-year');
+  if (bcLifetime) { bcLifetime.style.opacity = isPro ? '1' : '0.4'; bcLifetime.style.cursor = isPro ? 'pointer' : 'not-allowed'; }
+  if (bcYear)     { bcYear.style.opacity     = isPro ? '1' : '0.4'; bcYear.style.cursor     = isPro ? 'pointer' : 'not-allowed'; }
+
+  // S10: Pyramid
+  document.getElementById('s10-upsell').style.display      = isPro ? 'none'  : 'block';
+  document.getElementById('s10-actions-mid').style.display = isPro ? 'block' : 'none';
+  document.getElementById('s10-actions-top').style.display = isPro ? 'block' : 'none';
+  const pyrMid = document.getElementById('pyr-mid');
+  const pyrTop = document.getElementById('pyr-top');
+  const pyrMidLabel = document.getElementById('pyr-mid-label');
+  const pyrTopLabel = document.getElementById('pyr-top-label');
+  if (isPro) {
+    if (pyrMid) { pyrMid.setAttribute('fill', 'var(--sand)'); pyrMid.setAttribute('stroke', 'var(--border)'); }
+    if (pyrTop) { pyrTop.setAttribute('fill', 'var(--sand)'); pyrTop.setAttribute('stroke', 'var(--border)'); }
+    if (pyrMidLabel) pyrMidLabel.textContent = 'Nuôi Dưỡng';
+    if (pyrTopLabel) pyrTopLabel.textContent = 'Khai Phóng';
+  } else {
+    if (pyrMidLabel) pyrMidLabel.textContent = 'Nuôi Dưỡng 🔒';
+    if (pyrTopLabel) pyrTopLabel.textContent = 'Khai Phóng 🔒';
+  }
+
+  // Dev tier toggle btn
+  const btn = document.getElementById('tier-toggle-btn');
+  if (btn) {
+    btn.textContent = 'Tier: ' + appTier;
+    btn.className = 'tier-toggle ' + appTier.toLowerCase();
+  }
+}
+
+function cycleTier() {
+  const tiers = ['FREE','PRO'];
+  const next = tiers[(tiers.indexOf(appTier) + 1) % tiers.length];
+  applyTierState(next);
+}
+
+/* ═══ CHECKOUT ═══ */
+function openCheckout(plan) {
+  _coPlan = plan || 'pro';
+  const price = '199.000đ';
+  document.getElementById('co-title').textContent = 'Nâng cấp PRO';
+  document.getElementById('co-subtitle').textContent = price + ' · Lifetime · 1 hồ sơ';
+  document.getElementById('co-qr-amount').textContent = price;
+  document.getElementById('co-card-pay-btn').textContent = 'Thanh toán ' + price;
+  const m = document.getElementById('checkout-modal');
+  m.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  _coReset();
+}
+
+function closeCheckout() {
+  document.getElementById('checkout-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  if (_coTimer) { clearInterval(_coTimer); _coTimer = null; }
+}
+
+function _coReset() {
+  ['co-step1','co-step2-vietqr','co-step2-card','co-step3-success','co-step3-failure'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('co-step1').style.display = 'block';
+  document.getElementById('co-indicators').style.display = 'flex';
+  _coSetStep(1);
+  if (_coTimer) { clearInterval(_coTimer); _coTimer = null; }
+}
+
+function _coSetStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('co-ind-' + i).style.background = i <= n ? 'var(--ink)' : 'var(--border)';
+  });
+}
+
+function coSelectMethod(method) {
+  document.getElementById('co-step1').style.display = 'none';
+  _coSetStep(2);
+  if (method === 'vietqr') {
+    document.getElementById('co-step2-vietqr').style.display = 'block';
+    _coStartCountdown();
+  } else {
+    document.getElementById('co-step2-card').style.display = 'block';
+  }
+}
+
+function _coStartCountdown() {
+  let secs = 15 * 60;
+  const el = document.getElementById('co-countdown');
+  function tick() {
+    secs--;
+    if (secs <= 0) {
+      clearInterval(_coTimer); _coTimer = null;
+      document.getElementById('co-error-msg').textContent = 'QR đã hết hạn. Vui lòng thử lại.';
+      _coShowResult('failure'); return;
+    }
+    const m = Math.floor(secs / 60), s = secs % 60;
+    el.textContent = m + ':' + String(s).padStart(2, '0');
+  }
+  tick();
+  _coTimer = setInterval(tick, 1000);
+}
+
+function coSubmitCard() {
+  const num = document.getElementById('co-card-num').value.replace(/\s/g, '');
+  if (num.length < 16) { alert('Vui lòng nhập đầy đủ số thẻ.'); return; }
+  coSimulateSuccess();
+}
+
+function coSimulateSuccess() {
+  if (_coTimer) { clearInterval(_coTimer); _coTimer = null; }
+  document.getElementById('co-success-title').textContent = 'Nâng cấp thành công!';
+  document.getElementById('co-success-desc').innerHTML = 'Chào mừng bạn đến với <strong>360Human PRO</strong>.';
+  _coShowResult('success');
+  applyTierState('PRO');
+}
+
+function coSimulateFailure() {
+  if (_coTimer) { clearInterval(_coTimer); _coTimer = null; }
+  document.getElementById('co-error-msg').textContent = 'Giao dịch không thể hoàn thành. Vui lòng thử lại.';
+  _coShowResult('failure');
+}
+
+function _coShowResult(type) {
+  ['co-step2-vietqr','co-step2-card'].forEach(id => { document.getElementById(id).style.display = 'none'; });
+  document.getElementById('co-step3-' + type).style.display = 'block';
+  document.getElementById('co-indicators').style.display = type === 'success' ? 'none' : 'flex';
+  _coSetStep(3);
+}
+
+function coRetry() {
+  document.getElementById('co-step3-failure').style.display = 'none';
+  _coReset();
+}
+
+function coFormatCard(input) {
+  let v = input.value.replace(/\D/g, '').substring(0, 16);
+  input.value = v.replace(/(.{4})/g, '$1 ').trim();
+}
+
+function coFormatExpiry(input) {
+  let v = input.value.replace(/\D/g, '').substring(0, 4);
+  if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+  input.value = v;
+}
+
+document.getElementById('checkout-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeCheckout();
+});
+
+/* ═══ FORGOT PASSWORD ═══ */
+function openForgotPassword() {
+  const m = document.getElementById('forgot-modal');
+  m.style.display = 'flex';
+  document.getElementById('forgot-step1').style.display = 'block';
+  document.getElementById('forgot-step2').style.display = 'none';
+}
+
+function closeForgotPassword() {
+  document.getElementById('forgot-modal').style.display = 'none';
+}
+
+function sendForgotPassword() {
+  const email = document.getElementById('forgot-email').value.trim();
+  if (!email) { alert('Vui lòng nhập email.'); return; }
+  document.getElementById('forgot-step1').style.display = 'none';
+  document.getElementById('forgot-email-display').textContent = email;
+  document.getElementById('forgot-step2').style.display = 'block';
+}
+
+document.getElementById('forgot-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeForgotPassword();
+});
+
+/* ═══ PROFILE SETTINGS ═══ */
+function toggleBirthEdit() {
+  const disp = document.getElementById('birth-display');
+  const edit = document.getElementById('birth-edit');
+  const isEditing = edit.style.display !== 'none';
+  edit.style.display = isEditing ? 'none' : 'block';
+  disp.style.display = isEditing ? 'block' : 'none';
+}
+
+function togglePasswordForm() {
+  document.getElementById('password-form').classList.toggle('open');
+}
+
+function confirmDeleteAccount() {
+  if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
+    alert('Tài khoản đã được gửi yêu cầu xóa. Bạn sẽ nhận email xác nhận.');
+  }
+}
+
+/* ═══ MOBILE NAV ═══ */
+function openMobileNav() {
+  document.getElementById('mob-overlay').classList.add('open');
+  document.getElementById('mob-sidebar').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobileNav() {
+  document.getElementById('mob-overlay').classList.remove('open');
+  document.getElementById('mob-sidebar').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ═══ INIT ═══ */
+updateTierUI();
+</script>
+</body>
+</html>

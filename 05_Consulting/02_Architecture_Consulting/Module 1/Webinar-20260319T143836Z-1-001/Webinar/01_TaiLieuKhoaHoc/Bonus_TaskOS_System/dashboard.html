@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Antigravity Quest Board v4.1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pixel-black: #0D0D0D;
+            --pixel-dark: #1A1A2E;
+            --pixel-navy: #16213E;
+            --pixel-blue: #0F3460;
+            --pixel-cyan: #00D4FF;
+            --pixel-green: #00FF7F;
+            --pixel-yellow: #FFD700;
+            --pixel-red: #FF2D55;
+            --pixel-orange: #FF6B35;
+            --pixel-purple: #7C3AED;
+            --pixel-white: #F0F0F0;
+            --pixel-grey: #888;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background: var(--pixel-dark);
+            color: var(--pixel-white);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at 20% 10%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 90%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+        }
+
+        header {
+            background: var(--pixel-black);
+            border-bottom: 4px solid var(--pixel-cyan);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 0 var(--pixel-blue);
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0, 212, 255, 0.03) 40px, rgba(0, 212, 255, 0.03) 41px);
+            pointer-events: none;
+        }
+
+        .header-logo h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: var(--pixel-cyan);
+            margin: 0;
+            text-shadow: 0 0 10px var(--pixel-cyan), 4px 4px 0 rgba(0, 212, 255, 0.3);
+        }
+
+        .header-logo .sub-title {
+            font-size: 1.3rem;
+            color: var(--pixel-grey);
+            margin-top: 6px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+        }
+
+        .pixel-label {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            color: var(--pixel-cyan);
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .view-toggle {
+            display: flex;
+            border: 2px solid var(--pixel-cyan);
+        }
+
+        .view-btn {
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            background: var(--pixel-navy);
+            color: var(--pixel-grey);
+            border: none;
+            padding: 8px 14px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.1s;
+            border-right: 1px solid rgba(0, 212, 255, 0.3);
+            z-index: 10;
+        }
+
+        .view-btn:last-child {
+            border-right: none;
+        }
+
+        .view-btn.active {
+            background: var(--pixel-cyan);
+            color: var(--pixel-black);
+        }
+
+        .view-btn:hover:not(.active) {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--pixel-cyan);
+        }
+
+        .pixel-select-wrap {
+            display: flex;
+            flex-direction: column;
+        }
+
+        select.pixel-select {
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            background: var(--pixel-navy);
+            color: var(--pixel-yellow);
+            border: 2px solid var(--pixel-cyan);
+            padding: 7px 12px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 2px 2px 0 var(--pixel-blue);
+            min-width: 190px;
+            z-index: 10;
+        }
+
+        .btn-update {
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            background: var(--pixel-green);
+            color: var(--pixel-black);
+            border: none;
+            padding: 9px 20px;
+            cursor: pointer;
+            border-bottom: 4px solid #008040;
+            border-right: 4px solid #008040;
+            letter-spacing: 2px;
+            z-index: 10;
+            transition: all 0.05s;
+        }
+
+        .btn-update:hover {
+            background: #00FF9F;
+            transform: translateY(-2px);
+        }
+
+        .btn-update:active {
+            transform: translateY(2px);
+            border-bottom: 1px solid #008040;
+            border-right: 1px solid #008040;
+        }
+
+        .btn-update:disabled {
+            background: var(--pixel-grey);
+            border-color: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .board {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem 2rem 4rem;
+            align-items: flex-start;
+        }
+
+        .column {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            padding: 1rem;
+        }
+
+        #col-urgent {
+            border-color: var(--pixel-red);
+            box-shadow: 0 0 20px rgba(255, 45, 85, 0.2);
+        }
+
+        #col-pending {
+            border-color: var(--pixel-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        #col-done {
+            border-color: var(--pixel-green);
+            box-shadow: 0 0 20px rgba(0, 255, 127, 0.2);
+        }
+
+        .column h2 {
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            margin: 0 0 0.8rem 0;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            letter-spacing: 1px;
+        }
+
+        #col-urgent h2 {
+            background: rgba(255, 45, 85, 0.15);
+            border-bottom: 2px solid var(--pixel-red);
+            color: var(--pixel-red);
+        }
+
+        #col-pending h2 {
+            background: rgba(0, 212, 255, 0.1);
+            border-bottom: 2px solid var(--pixel-cyan);
+            color: var(--pixel-cyan);
+        }
+
+        #col-done h2 {
+            background: rgba(0, 255, 127, 0.1);
+            border-bottom: 2px solid var(--pixel-green);
+            color: var(--pixel-green);
+        }
+
+        .count {
+            font-size: 1.4rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 10px;
+            border: 1px solid currentColor;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        /* === TASK CARD === */
+        .task-card {
+            background: var(--pixel-navy);
+            border: 2px solid #334;
+            padding: 10px 12px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.05s, box-shadow 0.1s;
+        }
+
+        .task-card::before {
+            content: '▶';
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pixel-cyan);
+            font-size: 0.8rem;
+            transition: left 0.1s;
+        }
+
+        .task-card:hover {
+            transform: translateX(4px);
+            border-color: var(--pixel-cyan);
+            box-shadow: -3px 0 0 var(--pixel-cyan), 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .task-card:hover::before {
+            left: 8px;
+        }
+
+        .task-card:hover .card-actions {
+            opacity: 1;
+        }
+
+        .task-card.urgent {
+            background: rgba(255, 45, 85, 0.1);
+            border-color: var(--pixel-red);
+            animation: pulse-red 2s ease-in-out infinite;
+        }
+
+        .task-card.done {
+            background: rgba(0, 255, 127, 0.05);
+            border-color: rgba(0, 255, 127, 0.3);
+            opacity: 0.6;
+        }
+
+        .task-card.done::before {
+            content: '✓';
+            color: var(--pixel-green);
+        }
+
+        .task-card.is-agent {
+            border-left: 3px solid var(--pixel-purple);
+        }
+
+        @keyframes pulse-red {
+
+            0%,
+            100% {
+                box-shadow: -3px 0 0 var(--pixel-red), 0 0 5px rgba(255, 45, 85, 0.2);
+            }
+
+            50% {
+                box-shadow: -3px 0 0 var(--pixel-orange), 0 0 20px rgba(255, 45, 85, 0.4);
+            }
+        }
+
+        .task-card.urgent::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--pixel-red), var(--pixel-orange));
+            animation: xp-flicker 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes xp-flicker {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0.4;
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* === CARD ACTIONS (Edit + Delete) === */
+        .card-actions {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 5;
+        }
+
+        .task-card.urgent .card-actions {
+            right: 14px;
+        }
+
+        /* avoid XP bar */
+
+        .action-btn {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            padding: 2px 7px;
+            border: 1px solid;
+            cursor: pointer;
+            background: var(--pixel-black);
+            transition: all 0.1s;
+            line-height: 1.4;
+        }
+
+        .action-btn.edit {
+            color: var(--pixel-yellow);
+            border-color: var(--pixel-yellow);
+        }
+
+        .action-btn.edit:hover {
+            background: var(--pixel-yellow);
+            color: var(--pixel-black);
+        }
+
+        .action-btn.delete {
+            color: var(--pixel-red);
+            border-color: var(--pixel-red);
+        }
+
+        .action-btn.delete:hover {
+            background: var(--pixel-red);
+            color: var(--pixel-white);
+        }
+
+        /* === INLINE EDIT === */
+        .task-text-raw {
+            font-family: 'VT323', monospace;
+            font-size: 1.35rem;
+            line-height: 1.4;
+            color: var(--pixel-white);
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .task-card.done .task-text-raw {
+            text-decoration: line-through;
+            color: var(--pixel-grey);
+        }
+
+        .inline-edit-input {
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            background: rgba(255, 215, 0, 0.08);
+            color: var(--pixel-yellow);
+            border: 1px solid var(--pixel-yellow);
+            padding: 4px 8px;
+            width: 100%;
+            outline: none;
+            margin-bottom: 6px;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+        }
+
+        .edit-hint {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        /* === CARD META === */
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .type-badge {
+            font-size: 0.95rem;
+            padding: 1px 6px;
+            border: 1px solid;
+            flex-shrink: 0;
+            letter-spacing: 1px;
+        }
+
+        .type-badge.project {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--pixel-cyan);
+            border-color: var(--pixel-cyan);
+        }
+
+        .type-badge.agent {
+            background: rgba(124, 58, 237, 0.2);
+            color: #A78BFA;
+            border-color: var(--pixel-purple);
+        }
+
+        .owner-label {
+            font-size: 1rem;
+            color: #A78BFA;
+            letter-spacing: 1px;
+        }
+
+        .task-source {
+            font-size: 1rem;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .task-source::before {
+            content: '📂';
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .tag {
+            font-size: 1.05rem;
+            padding: 1px 5px;
+            background: rgba(124, 58, 237, 0.3);
+            color: #A78BFA;
+            border: 1px solid #7C3AED;
+            display: inline-block;
+            margin: 0 2px;
+            vertical-align: middle;
+        }
+
+        .tag[data-urgency] {
+            background: rgba(255, 45, 85, 0.3);
+            color: var(--pixel-red);
+            border-color: var(--pixel-red);
+            animation: blink 1s step-end infinite;
+        }
+
+        #status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--pixel-black);
+            border-top: 2px solid var(--pixel-cyan);
+            padding: 5px 2rem;
+            font-size: 1.1rem;
+            color: var(--pixel-cyan);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #status-bar .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--pixel-green);
+            margin-right: 6px;
+            animation: blink 1s step-end infinite;
+        }
+
+        #last-sync {
+            font-size: 1.1rem;
+            color: var(--pixel-grey);
+            margin-top: 4px;
+        }
+
+        /* === PIXEL CONFIRM DIALOG === */
+        .pixel-confirm {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            display: none;
+        }
+
+        .pixel-confirm.show {
+            display: flex;
+        }
+
+        .pixel-confirm-box {
+            background: var(--pixel-black);
+            border: 3px solid var(--pixel-red);
+            box-shadow: 4px 4px 0 var(--pixel-red), 0 0 30px rgba(255, 45, 85, 0.3);
+            padding: 2rem;
+            text-align: center;
+            max-width: 360px;
+        }
+
+        .pixel-confirm-box h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: var(--pixel-red);
+            margin: 0 0 1rem;
+        }
+
+        .pixel-confirm-box p {
+            font-size: 1.3rem;
+            color: var(--pixel-white);
+            margin: 0 0 1.2rem;
+            line-height: 1.5;
+        }
+
+        .pixel-confirm-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .pixel-confirm-actions button {
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            padding: 8px 20px;
+            border: 2px solid;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        #confirm-yes {
+            background: var(--pixel-red);
+            color: white;
+            border-color: var(--pixel-red);
+        }
+
+        #confirm-no {
+            background: transparent;
+            color: var(--pixel-grey);
+            border-color: var(--pixel-grey);
+        }
+
+        #confirm-yes:hover {
+            background: #ff5070;
+        }
+
+        #confirm-no:hover {
+            color: var(--pixel-white);
+            border-color: var(--pixel-white);
+        }
+
+        .empty-placeholder {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #444;
+            font-size: 1.2rem;
+            line-height: 2;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--pixel-cyan);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-logo">
+            <h1>⚔️ QUEST BOARD</h1>
+            <div class="sub-title">Antigravity Task OS v4.1 — Edit + Delete</div>
+            <div id="last-sync">Đang tải nhiệm vụ...</div>
+        </div>
+        <div class="header-controls">
+            <div class="pixel-select-wrap">
+                <span class="pixel-label">◈ View Mode</span>
+                <div class="view-toggle">
+                    <button class="view-btn active" id="btn-all" onclick="setView('all')">🌐 ALL</button>
+                    <button class="view-btn" id="btn-project" onclick="setView('project')">🏛️ PROJECT</button>
+                    <button class="view-btn" id="btn-agent" onclick="setView('agent')">🤖 AGENT</button>
+                </div>
+            </div>
+            <div class="pixel-select-wrap" id="project-filter-wrap">
+                <span class="pixel-label">◈ Filter</span>
+                <select id="project-filter" class="pixel-select" onchange="applyFilters()">
+                    <option value="all">[ ALL ]</option>
+                </select>
+            </div>
+            <div class="pixel-select-wrap" id="agent-filter-wrap" style="display:none;">
+                <span class="pixel-label">◈ Agent</span>
+                <select id="agent-filter" class="pixel-select" onchange="applyFilters()">
+                    <option value="all">[ ALL AGENTS ]</option>
+                </select>
+            </div>
+            <button class="btn-update" onclick="requestUpdate()">↺ SYNC</button>
+        </div>
+    </header>
+
+    <div class="board">
+        <div class="column" id="col-urgent">
+            <h2>🔥 CRITICAL <span class="count">0</span></h2>
+            <div class="list"></div>
+        </div>
+        <div class="column" id="col-pending">
+            <h2>⏳ IN PROGRESS <span class="count">0</span></h2>
+            <div class="list"></div>
+        </div>
+        <div class="column" id="col-done">
+            <h2>✅ COMPLETED <span class="count">0</span></h2>
+            <div class="list"></div>
+        </div>
+    </div>
+
+    <div id="status-bar">
+        <div><span class="dot"></span> SERVER: ONLINE | DUAL-LAYER v4.1 | EDIT+DELETE ENABLED</div>
+        <div id="stat-counts">PROJECT: 0 | AGENT: 0</div>
+    </div>
+
+    <!-- Pixel Confirm Dialog -->
+    <div class="pixel-confirm" id="confirm-dialog">
+        <div class="pixel-confirm-box">
+            <h3>⚠ CONFIRM DELETE</h3>
+            <p id="confirm-msg">Xóa task này?</p>
+            <div class="pixel-confirm-actions">
+                <button id="confirm-yes">✗ DELETE</button>
+                <button id="confirm-no">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allTasks = [];
+        let currentView = 'all';
+        let pendingDelete = null;
+
+        // === CONFIRM DIALOG ===
+        document.getElementById('confirm-yes').onclick = async () => {
+            if (!pendingDelete) return;
+            closeConfirm();
+            await callAPI('/delete-task', pendingDelete);
+            pendingDelete = null;
+        };
+        document.getElementById('confirm-no').onclick = () => { pendingDelete = null; closeConfirm(); };
+
+        function showConfirm(msg, data) {
+            document.getElementById('confirm-msg').innerText = msg;
+            document.getElementById('confirm-dialog').classList.add('show');
+            pendingDelete = data;
+        }
+        function closeConfirm() { document.getElementById('confirm-dialog').classList.remove('show'); }
+
+        // === API CALLS ===
+        async function callAPI(endpoint, body) {
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const result = await res.json();
+                if (result.status === 'success') await loadData();
+                else alert('❌ Error: ' + result.message);
+            } catch (e) {
+                alert('⚠️ Server offline! Hãy chạy python task_server.py');
+            }
+        }
+
+        // === VIEW TOGGLE ===
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + view).classList.add('active');
+            document.getElementById('project-filter-wrap').style.display = (view === 'agent') ? 'none' : 'flex';
+            document.getElementById('agent-filter-wrap').style.display = (view === 'agent') ? 'flex' : 'none';
+            document.getElementById('project-filter').value = 'all';
+            document.getElementById('agent-filter').value = 'all';
+            applyFilters();
+        }
+
+        // === FILTERS ===
+        function applyFilters() {
+            let filtered = [...allTasks];
+            if (currentView === 'project') filtered = filtered.filter(t => t.type === 'project');
+            else if (currentView === 'agent') filtered = filtered.filter(t => t.type === 'agent');
+
+            const pf = document.getElementById('project-filter').value;
+            if (currentView !== 'agent' && pf !== 'all') filtered = filtered.filter(t => t.project && t.project.toLowerCase() === pf);
+
+            const af = document.getElementById('agent-filter').value;
+            if (currentView === 'agent' && af !== 'all') filtered = filtered.filter(t => t.owner && t.owner.toLowerCase() === af);
+
+            const now = new Date();
+            const proj = allTasks.filter(t => t.type === 'project').length;
+            const agent = allTasks.filter(t => t.type === 'agent').length;
+            document.getElementById('last-sync').innerText = `▸ ${now.toLocaleTimeString()} | VIEW: ${currentView.toUpperCase()} | ${filtered.length} QUESTS`;
+            document.getElementById('stat-counts').innerText = `PROJECT: ${proj} | AGENT: ${agent}`;
+            renderBoard(filtered);
+        }
+
+        function updateFilters(tasks) {
+            const pf = document.getElementById('project-filter');
+            const pfVal = pf.value;
+            const projects = [...new Set(tasks.filter(t => t.type === 'project').map(t => t.project).filter(Boolean))].sort();
+            pf.innerHTML = '<option value="all">[ ALL ]</option>';
+            projects.forEach(p => {
+                const o = document.createElement('option');
+                o.value = p.toLowerCase(); o.innerText = `▸ ${p.toUpperCase()}`; pf.appendChild(o);
+            });
+            pf.value = pfVal;
+
+            const af = document.getElementById('agent-filter');
+            const afVal = af.value;
+            const agents = [...new Set(tasks.filter(t => t.type === 'agent').map(t => t.owner).filter(Boolean))].sort();
+            af.innerHTML = '<option value="all">[ ALL AGENTS ]</option>';
+            agents.forEach(a => {
+                const o = document.createElement('option');
+                o.value = a.toLowerCase(); o.innerText = `🤖 ${a.toUpperCase()}`; af.appendChild(o);
+            });
+            af.value = afVal;
+        }
+
+        // === EDIT INLINE ===
+        function startEdit(card, task) {
+            const textEl = card.querySelector('.task-text-raw');
+            if (!textEl) return;
+
+            // Lấy text thuần (bỏ HTML tags)
+            const rawText = task.text;
+            textEl.style.display = 'none';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'inline-edit-input';
+            input.value = rawText;
+
+            const hint = document.createElement('div');
+            hint.className = 'edit-hint';
+            hint.innerText = '↵ Save  |  Esc Cancel';
+
+            textEl.parentNode.insertBefore(input, textEl);
+            textEl.parentNode.insertBefore(hint, textEl);
+            input.focus();
+            input.select();
+
+            function cancel() {
+                input.remove(); hint.remove(); textEl.style.display = '';
+            }
+
+            input.onkeydown = async (e) => {
+                if (e.key === 'Enter') {
+                    const newText = input.value.trim();
+                    if (!newText || newText === rawText) { cancel(); return; }
+                    cancel();
+                    await callAPI('/update-task', { file_path: task.file_path, line: task.line, new_text: newText });
+                } else if (e.key === 'Escape') {
+                    cancel();
+                }
+            };
+            input.onblur = () => setTimeout(() => { if (document.contains(input)) cancel(); }, 150);
+        }
+
+        // === RENDER BOARD ===
+        function renderBoard(tasks) {
+            const cols = {
+                urgent: document.querySelector('#col-urgent .list'),
+                pending: document.querySelector('#col-pending .list'),
+                done: document.querySelector('#col-done .list')
+            };
+            Object.values(cols).forEach(c => c.innerHTML = '');
+            let counts = { urgent: 0, pending: 0, done: 0 };
+
+            tasks.forEach(task => {
+                const isUrgent = task.tags && task.tags.some(t => ['#urgent', '#critical'].includes(t.toLowerCase()));
+                const isAgent = task.type === 'agent';
+
+                const card = document.createElement('div');
+                card.className = `task-card ${task.done ? 'done' : ''} ${isUrgent && !task.done ? 'urgent' : ''} ${isAgent ? 'is-agent' : ''}`;
+
+                // Tags in text
+                let textWithTags = task.text || '';
+                if (task.tags) {
+                    task.tags.forEach(tag => {
+                        const isUT = ['#urgent', '#critical'].includes(tag.toLowerCase());
+                        textWithTags = textWithTags.replace(tag, `<span class="tag" ${isUT ? 'data-urgency="true"' : ''}>${tag}</span>`);
+                    });
+                }
+                textWithTags = textWithTags.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--pixel-yellow)">$1</strong>');
+                textWithTags = textWithTags.replace(/`([^`]+)`/g, '<code style="background:rgba(0,255,127,0.1);padding:2px 5px;color:var(--pixel-green);border:1px solid rgba(0,255,127,0.3)">$1</code>');
+                textWithTags = textWithTags.replace(/\*(.*?)\*/g, '<em style="color:#a78bfa">$1</em>');
+
+                card.innerHTML = `
+                    <div class="card-actions">
+                        <button class="action-btn edit" title="Edit task">✏ EDIT</button>
+                        <button class="action-btn delete" title="Delete task">✗ DEL</button>
+                    </div>
+                    <div class="card-header">
+                        <span class="type-badge ${task.type || 'project'}">${task.type === 'agent' ? 'AGENT' : 'PROJECT'}</span>
+                        ${task.owner ? `<span class="owner-label">${task.owner.toUpperCase()}</span>` : ''}
+                    </div>
+                    <div class="task-text-raw">${textWithTags}</div>
+                    <div class="task-source">${task.file_path || ''} : L${task.line || '?'}</div>
+                `;
+
+                // Edit button
+                card.querySelector('.action-btn.edit').onclick = (e) => {
+                    e.stopPropagation();
+                    startEdit(card, task);
+                };
+
+                // Delete button
+                card.querySelector('.action-btn.delete').onclick = (e) => {
+                    e.stopPropagation();
+                    const preview = (task.text || '').substring(0, 60) + ((task.text || '').length > 60 ? '...' : '');
+                    showConfirm(`"${preview}"`, { file_path: task.file_path, line: task.line });
+                };
+
+                if (task.done) { cols.done.appendChild(card); counts.done++; }
+                else if (isUrgent) { cols.urgent.appendChild(card); counts.urgent++; }
+                else { cols.pending.appendChild(card); counts.pending++; }
+            });
+
+            if (!counts.urgent) cols.urgent.innerHTML = '<div class="empty-placeholder">[ NO CRITICAL ]<br>ALL SAFE ✓</div>';
+            if (!counts.pending) cols.pending.innerHTML = '<div class="empty-placeholder">[ QUEUE EMPTY ]<br>WELL DONE!</div>';
+            if (!counts.done) cols.done.innerHTML = '<div class="empty-placeholder">[ NONE YET ]<br>START A QUEST...</div>';
+
+            document.querySelector('#col-urgent .count').innerText = counts.urgent;
+            document.querySelector('#col-pending .count').innerText = counts.pending;
+            document.querySelector('#col-done .count').innerText = counts.done;
+        }
+
+        // === LOAD DATA ===
+        async function loadData() {
+            try {
+                const res = await fetch('todos.json?t=' + Date.now());
+                allTasks = await res.json();
+                updateFilters(allTasks);
+                applyFilters();
+            } catch (e) {
+                document.getElementById('last-sync').innerText = '⚠️ ERROR: todos.json not found. Run task_server.py!';
+            }
+        }
+
+        // === SYNC ===
+        async function requestUpdate() {
+            const btn = document.querySelector('.btn-update');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '... SCANNING'; btn.disabled = true;
+            try {
+                await callAPI('/update', {});
+            } finally {
+                btn.innerHTML = orig; btn.disabled = false;
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+
+</html>

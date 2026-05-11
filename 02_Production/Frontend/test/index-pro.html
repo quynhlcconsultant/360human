@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>360Human — Wireframe (PRO Unlocked)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Clean B&W — white bg, black text */
+  --cream: #ffffff; --warm-white: #f8f8f8; --sand: #f0f0f0;
+  --ink: #000000; --charcoal: #444444; --stone: #888888; --border: #e0e0e0;
+  --gold: #000000; --gold-soft: #333333; --gold-bg: #f0f0f0;
+  --sage: #555555; --sage-bg: #f5f5f5;
+  --ember: #666666; --ember-bg: #f8f4f0;
+  --error: #cc2200; --error-bg: #fff5f5;
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-reading: "Lora", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font-body); background:var(--cream); color:var(--ink); font-size:16px; line-height:1.7; }
+/* grain disabled for dark theme */
+
+.screen { display:none; min-height:100vh; position:relative; z-index:1; }
+.screen.active { display:block; }
+.btn { display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-weight:500; font-size:15px; border:none; border-radius:var(--radius-md); cursor:pointer; padding:12px 24px; transition:all 0.15s; }
+.btn-gold { background:var(--gold); color:var(--warm-white); }
+.btn-gold:hover { background:var(--gold-soft); }
+.btn-ghost { background:transparent; color:var(--charcoal); border:1px solid var(--border); }
+.btn-ghost:hover { background:var(--sand); }
+.btn-sm { padding:8px 16px; font-size:13px; }
+.btn-lg { padding:16px 32px; font-size:16px; }
+.btn-full { width:100%; }
+.card { background:var(--warm-white); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); padding:24px; }
+.badge { display:inline-flex; padding:4px 12px; font-size:12px; font-weight:600; border-radius:var(--radius-full); border:1px solid; }
+.badge-pro { background:var(--gold-bg); color:var(--gold); border-color:var(--gold); }
+.badge-system { background:var(--sand); color:var(--stone); border-color:var(--border); font-family:var(--font-mono); font-size:11px; font-weight:400; }
+h1 { font-family:var(--font-heading); font-size:40px; font-weight:700; line-height:1.2; }
+h2 { font-family:var(--font-heading); font-size:24px; font-weight:600; line-height:1.4; }
+h3 { font-family:var(--font-heading); font-size:20px; font-weight:500; line-height:1.5; }
+h4 { font-family:var(--font-body); font-size:16px; font-weight:600; line-height:1.7; }
+.source { font-family:var(--font-mono); font-size:13px; color:var(--stone); opacity:0.8; }
+.reading-text { font-family:var(--font-reading); font-size:18px; line-height:1.8; max-width:680px; }
+.muted { color:var(--stone); }
+.container-md { max-width:960px; margin:0 auto; padding:0 48px; }
+input[type="text"],input[type="email"],input[type="password"],select { width:100%; padding:12px 16px; font-family:var(--font-body); font-size:15px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--warm-white); color:var(--ink); outline:none; }
+input:focus { border-color:var(--gold); box-shadow:0 0 0 2px rgba(184,134,11,0.15); }
+.progress-bar { height:4px; background:var(--sand); border-radius:2px; overflow:hidden; }
+.progress-bar .fill { height:100%; background:var(--gold); border-radius:2px; transition:width 0.3s; }
+.accordion-item { border:1px solid var(--border); border-radius:var(--radius-lg); margin-bottom:8px; background:var(--warm-white); overflow:hidden; }
+.accordion-header { padding:16px 24px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-family:var(--font-heading); font-size:18px; font-weight:500; }
+.accordion-header:hover { background:var(--sand); }
+.accordion-header .arrow { transition:transform 0.2s; font-size:14px; color:var(--stone); }
+.accordion-item.open .accordion-header .arrow { transform:rotate(180deg); }
+.accordion-body { padding:0 24px 24px; display:none; }
+.accordion-item.open .accordion-body { display:block; }
+.tabs { display:flex; border-bottom:1px solid var(--border); gap:0; }
+.tab { padding:12px 24px; cursor:pointer; font-size:15px; font-weight:500; color:var(--stone); border-bottom:2px solid transparent; transition:all 0.15s; }
+.tab:hover { color:var(--charcoal); }
+.tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:16px 48px; border-bottom:1px solid var(--border); background:var(--warm-white); }
+.topbar-left { display:flex; align-items:center; gap:12px; }
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.app-layout { display:flex; min-height:100vh; }
+.sidebar { width:240px; background:var(--warm-white); border-right:1px solid var(--border); padding:24px 0; flex-shrink:0; }
+.sidebar-logo { padding:0 24px 24px; font-family:var(--font-heading); font-size:20px; font-weight:600; }
+.sidebar-nav { list-style:none; }
+.sidebar-nav li { padding:10px 24px; cursor:pointer; font-size:15px; color:var(--charcoal); display:flex; align-items:center; gap:10px; transition:all 0.1s; }
+.sidebar-nav li:hover { background:var(--sand); }
+.sidebar-nav li.active { color:var(--gold); background:var(--gold-bg); font-weight:500; }
+.app-main { flex:1; overflow-y:auto; }
+.dev-nav { display:none; }
+.dev-nav button { padding:6px 12px; font-size:12px; font-family:var(--font-mono); background:var(--charcoal); color:var(--sand); border:none; border-radius:4px; cursor:pointer; white-space:nowrap; }
+.dev-nav button:hover { background:var(--stone); }
+.dev-nav button.active { background:var(--gold); color:white; }
+.action-card { padding:12px 16px; background:var(--sand); border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:start; gap:12px; }
+.action-card.selected { background:var(--gold-bg); border:1px solid var(--gold); }
+@keyframes copulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+@media (max-width:768px) {
+  .sidebar { display:none; }
+  .topbar { padding:12px 20px; }
+  .two-col { flex-direction:column!important; }
+  h1 { font-size:28px; }
+  h2 { font-size:20px; }
+  .container-md { padding:0 20px!important; }
+  .app-main > .two-col > div { padding:20px!important; }
+}
+@media (max-width:480px) {
+  .card { padding:16px; }
+  .btn-lg { padding:14px 20px; font-size:15px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     S1 — LANDING (same as FREE)
+     ═══════════════════════════════════════════ -->
+<div id="s1" class="screen active">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:16px 48px;position:absolute;top:0;left:0;right:0;z-index:10;">
+    <div style="font-family:var(--font-heading);font-size:20px;font-weight:600;">360Human</div>
+    <div style="display:flex;gap:12px;">
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('s2')">Đăng nhập</button>
+      <button class="btn btn-gold btn-sm" onclick="showScreen('s2')">Đăng ký</button>
+    </div>
+  </header>
+  <section style="min-height:90vh;display:flex;align-items:center;padding:120px 48px 64px;">
+    <div style="max-width:1280px;margin:0 auto;display:flex;gap:64px;align-items:center;width:100%;" class="two-col">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 300 200" style="width:300px;">
+          <path d="M 20 150 Q 75 50 150 100 Q 225 150 280 60" stroke="var(--gold)" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+          <circle cx="150" cy="100" r="30" fill="none" stroke="var(--gold)" stroke-width="2"/>
+          <circle cx="150" cy="100" r="15" fill="var(--gold-bg)" stroke="var(--gold)" stroke-width="1"/>
+          <line x1="150" y1="70" x2="150" y2="40" stroke="var(--gold)" stroke-width="1"/><line x1="180" y1="100" x2="210" y2="100" stroke="var(--gold)" stroke-width="1"/>
+          <line x1="150" y1="130" x2="150" y2="160" stroke="var(--gold)" stroke-width="1"/><line x1="120" y1="100" x2="90" y2="100" stroke="var(--gold)" stroke-width="1"/>
+          <line x1="172" y1="78" x2="195" y2="55" stroke="var(--gold)" stroke-width="1"/>
+          <text x="150" y="38" text-anchor="middle" style="font-size:9px;fill:var(--stone);font-family:var(--font-mono);">Tử Vi</text>
+          <text x="218" y="104" style="font-size:9px;fill:var(--stone);font-family:var(--font-mono);">BaZi</text>
+          <text x="150" y="175" text-anchor="middle" style="font-size:9px;fill:var(--stone);font-family:var(--font-mono);">Số học</text>
+          <text x="68" y="104" text-anchor="end" style="font-size:9px;fill:var(--stone);font-family:var(--font-mono);">Vedic</text>
+          <text x="200" y="52" style="font-size:9px;fill:var(--stone);font-family:var(--font-mono);">HD</text>
+        </svg>
+      </div>
+      <div style="flex:1;">
+        <h1 style="margin-bottom:16px;">Hiểu mình sâu hơn,<br>sống đúng hơn</h1>
+        <p style="font-size:18px;color:var(--charcoal);margin-bottom:32px;max-width:480px;line-height:1.8;">5 hệ thống phân tích — một bức tranh toàn diện về con người bạn.</p>
+        <button class="btn btn-gold btn-lg" onclick="showScreen('s3')">Khám phá bản thân</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     S2 — AUTH (skip in PRO flow)
+     ═══════════════════════════════════════════ -->
+<div id="s2" class="screen">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
+    <div style="max-width:480px;width:100%;padding:0 20px;">
+      <div style="text-align:center;margin-bottom:32px;"><div style="font-family:var(--font-heading);font-size:24px;font-weight:600;cursor:pointer;" onclick="showScreen('s1')">360Human</div></div>
+      <div class="tabs" style="margin-bottom:24px;"><div class="tab active">Đăng ký</div><div class="tab">Đăng nhập</div></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Email</label><input type="email" placeholder="email@example.com"></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Mật khẩu</label><input type="password" placeholder="Tối thiểu 8 ký tự"></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Xác nhận</label><input type="password" placeholder="Nhập lại mật khẩu"></div>
+      <button class="btn btn-gold btn-full" onclick="showScreen('s3')">Tạo tài khoản</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     S3 — ONBOARDING + LOADING
+     ═══════════════════════════════════════════ -->
+<div id="s3" class="screen">
+  <div id="s3-form" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px 20px;transition:opacity 0.5s;">
+    <div style="max-width:480px;width:100%;">
+      <div style="text-align:center;margin-bottom:32px;"><div style="font-family:var(--font-heading);font-size:24px;font-weight:600;">360Human</div><p class="muted" style="margin-top:8px;">Chỉ cần vài thông tin để bắt đầu</p></div>
+      <div class="progress-bar" style="margin-bottom:32px;"><div class="fill" id="ob-prog" style="width:0%"></div></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Họ tên</label><input type="text" placeholder="Họ và tên khai sinh" oninput="upProg()"></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Giới tính</label>
+        <div style="display:flex;gap:8px;"><button class="btn btn-ghost" style="flex:1;" onclick="selGender(this)">Nam</button><button class="btn btn-ghost" style="flex:1;" onclick="selGender(this)">Nữ</button><button class="btn btn-ghost" style="flex:1;" onclick="selGender(this)">Khác</button></div></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Ngày sinh</label>
+        <div style="display:flex;gap:8px;"><input type="number" placeholder="DD" style="width:80px;" oninput="upProg()"><input type="number" placeholder="MM" style="width:80px;"><input type="number" placeholder="YYYY" style="width:120px;"></div></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Giờ sinh</label><input type="text" placeholder="HH:MM" oninput="upProg()">
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--stone);cursor:pointer;"><input type="checkbox" style="width:auto;"> Tôi không nhớ giờ sinh</label></div>
+      <div style="margin-bottom:24px;"><label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Nơi sinh</label><input type="text" placeholder="Thành phố" oninput="upProg()"></div>
+      <button class="btn btn-gold btn-full btn-lg" onclick="startLoading()">Bắt đầu khám phá</button>
+    </div>
+  </div>
+  <!-- 5-layer loading -->
+  <div id="s3-loading" style="display:none;position:fixed;inset:0;background:var(--cream);z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+    <h2 style="margin-bottom:24px;">Đang tạo biểu đồ của bạn...</h2>
+    <div id="load-layers" style="width:320px;display:flex;flex-direction:column;gap:8px;"></div>
+    <p class="muted" style="margin-top:16px;font-size:13px;" id="load-status"></p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     S4 — DASHBOARD (PRO — ALL UNLOCKED)
+     ═══════════════════════════════════════════ -->
+<div id="s4" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">360Human</div>
+      <ul class="sidebar-nav">
+        <li class="active" onclick="showScreen('s4')">◉ Dashboard</li>
+        <li onclick="showScreen('s9')">◷ Time Oracle</li>
+        <li onclick="showScreen('s10')">△ Actions</li>
+        <li onclick="showScreen('s8')">⚙ Cài đặt</li>
+      </ul>
+    </nav>
+    <div class="app-main">
+      <div class="topbar">
+        <div class="topbar-left"><span style="font-weight:500;">Thảo Nguyễn</span><span class="badge badge-pro">PRO</span></div>
+        <div class="topbar-right"><button class="btn btn-ghost btn-sm">Export PDF ↗</button></div>
+      </div>
+      <!-- Progress -->
+      <div style="padding:12px 48px;background:var(--sand);display:flex;align-items:center;gap:16px;">
+        <div class="progress-bar" style="flex:1;"><div class="fill" id="dash-progress" style="width:10%"></div></div>
+        <span style="font-size:13px;color:var(--stone);" id="dash-count">1/10 chủ đề</span>
+      </div>
+
+      <div style="display:flex;gap:0;" class="two-col">
+        <!-- LEFT: Topics accordion (2/3) -->
+        <div style="flex:2;padding:32px 32px 32px 48px;border-right:1px solid var(--border);" id="topics-col">
+          <h2 style="margin-bottom:24px;">Luận giải theo chủ đề</h2>
+          <!-- Topics generated by JS -->
+        </div>
+
+        <!-- RIGHT: Charts (1/3) -->
+        <div style="flex:1;padding:32px 48px 32px 32px;">
+          <h3 style="margin-bottom:16px;">Biểu đồ hệ thống</h3>
+          <p class="muted" style="font-size:13px;margin-bottom:24px;">Charts = WHY — dữ liệu đằng sau luận giải</p>
+          <div style="display:flex;flex-direction:column;gap:8px;" id="charts-col"></div>
+          <button class="btn btn-gold btn-full" style="margin-top:24px;" onclick="showScreen('s5')">Xem luận giải chi tiết theo hệ thống →</button>
+        </div>
+      </div>
+
+      <!-- Q&A -->
+      <div style="padding:32px 48px;border-top:1px solid var(--border);">
+        <h3 style="margin-bottom:16px;">Hỏi đáp</h3>
+        <div style="display:flex;gap:8px;max-width:680px;">
+          <input type="text" placeholder="Hỏi về luận giải của bạn..." style="flex:1;" id="qa-input">
+          <button class="btn btn-gold btn-sm" onclick="askQA()">Gửi</button>
+        </div>
+        <div id="qa-response" style="margin-top:16px;max-width:680px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     S5 — SYSTEM READING (PRO — ALL 5 SYSTEMS)
+     ═══════════════════════════════════════════ -->
+<div id="s5" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">360Human</div>
+      <ul class="sidebar-nav">
+        <li onclick="showScreen('s4')">◉ Dashboard</li>
+        <li onclick="showScreen('s9')">◷ Time Oracle</li>
+        <li onclick="showScreen('s10')">△ Actions</li>
+        <li onclick="showScreen('s8')">⚙ Cài đặt</li>
+      </ul>
+    </nav>
+    <div class="app-main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <a href="#" style="color:var(--stone);font-size:14px;" onclick="showScreen('s4')">← Dashboard</a>
+          <span style="color:var(--border);">›</span>
+          <span style="font-weight:500;" id="s5-system-name">Tử Vi</span>
+        </div>
+        <div class="topbar-right"><span class="badge badge-pro">PRO</span></div>
+      </div>
+      <!-- System tabs -->
+      <div class="tabs" style="padding:0 48px;" id="system-tabs"></div>
+
+      <div style="display:flex;gap:0;" class="two-col">
+        <!-- Left: Chart -->
+        <div style="flex:1;padding:32px 32px 32px 48px;border-right:1px solid var(--border);">
+          <h3 style="margin-bottom:16px;" id="s5-chart-title">Lá số Tử Vi</h3>
+          <div id="s5-chart" style="aspect-ratio:1;max-width:400px;background:var(--sand);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;">
+            <p class="muted">Chart visualization</p>
+          </div>
+          <p class="source" style="margin-top:12px;">Click vào thành phần để xem luận giải</p>
+        </div>
+        <!-- Right: Reading -->
+        <div style="flex:1;padding:32px 48px 32px 32px;">
+          <div class="tabs" style="margin-bottom:24px;padding:0;">
+            <div class="tab active" onclick="s5Mode(this,'deep')">Phân tích sâu</div>
+            <div class="tab" onclick="s5Mode(this,'interactive')">Interactive</div>
+          </div>
+          <div id="s5-reading" class="reading-text"></div>
+          <!-- Q&A -->
+          <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);">
+            <h4 style="margin-bottom:12px;">Hỏi về <span id="s5-qa-label">Tử Vi</span></h4>
+            <div style="display:flex;gap:8px;">
+              <input type="text" placeholder="Hỏi về hệ thống này..." style="flex:1;">
+              <button class="btn btn-gold btn-sm">Gửi</button>
+            </div>
+            <p class="muted" style="font-size:13px;margin-top:8px;">Không giới hạn lượt hỏi</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     S7 — PRICING (PRO user view)
+     ═══════════════════════════════════════════ -->
+<div id="s7" class="screen">
+  <div style="min-height:100vh;padding:96px 48px;">
+    <div class="container-md">
+      <div style="text-align:center;margin-bottom:48px;">
+        <h1 style="margin-bottom:12px;">Bạn đang dùng PRO</h1>
+        <p class="muted" style="font-size:18px;">Tất cả tính năng đã được mở khóa</p>
+      </div>
+      <div style="display:flex;gap:24px;justify-content:center;" class="two-col">
+        <div class="card" style="flex:1;max-width:380px;opacity:0.6;">
+          <div class="badge" style="background:var(--sand);color:var(--charcoal);border-color:var(--border);margin-bottom:16px;">FREE</div>
+          <div style="font-family:var(--font-heading);font-size:32px;font-weight:700;">0đ</div>
+          <p class="muted" style="margin-top:16px;">2 chủ đề · Nền Móng · Tháng hiện tại</p>
+        </div>
+        <div class="card" style="flex:1;max-width:380px;border:2px solid var(--gold);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;"><span class="badge badge-pro">PRO</span><span style="font-size:13px;color:var(--gold);font-weight:500;">Gói hiện tại ✓</span></div>
+          <div style="font-family:var(--font-heading);font-size:32px;font-weight:700;">199.000đ</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:15px;margin-top:24px;">
+            <li>✓ 10 chủ đề luận giải</li><li>✓ Cả 3 tầng actions</li><li>✓ 5 hệ thống biểu đồ</li>
+            <li>✓ Lifetime Time Oracle</li><li>✓ Hỏi đáp không giới hạn</li><li>✓ Export PDF</li>
+          </ul>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:32px;"><button class="btn btn-ghost" onclick="showScreen('s4')">← Quay lại Dashboard</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     S8 — PROFILE (PRO)
+     ═══════════════════════════════════════════ -->
+<div id="s8" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar"><div class="sidebar-logo">360Human</div><ul class="sidebar-nav">
+      <li onclick="showScreen('s4')">◉ Dashboard</li><li onclick="showScreen('s9')">◷ Time Oracle</li>
+      <li onclick="showScreen('s10')">△ Actions</li><li class="active">⚙ Cài đặt</li>
+    </ul></nav>
+    <div class="app-main">
+      <div class="topbar"><div class="topbar-left"><a href="#" style="color:var(--stone);" onclick="showScreen('s4')">← Dashboard</a></div></div>
+      <div class="container-md" style="padding-top:32px;padding-bottom:64px;">
+        <div class="card" style="margin-bottom:24px;display:flex;gap:24px;align-items:center;">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--gold-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:24px;color:var(--gold);font-weight:600;">TN</div>
+          <div style="flex:1;"><div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;"><strong style="font-size:18px;">Thảo Nguyễn</strong><span class="badge badge-pro">PRO</span></div><p class="muted" style="font-size:14px;">thao.nguyen@email.com</p></div>
+        </div>
+        <div class="card" style="margin-bottom:24px;"><h4 style="margin-bottom:12px;">Dữ liệu sinh</h4><p style="font-size:15px;">15/06/1997 · 14:30 · TP. Hồ Chí Minh</p></div>
+        <div class="card" style="margin-bottom:24px;"><h4 style="margin-bottom:12px;">Hồ sơ</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gold-bg);border-radius:var(--radius-sm);border:1px solid var(--gold);"><span>◉</span><strong>Thảo Nguyễn</strong><span class="badge badge-pro" style="margin-left:auto;">PRO</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--warm-white);border-radius:var(--radius-sm);border:1px solid var(--border);"><span style="opacity:0.3;">○</span><span class="muted">Minh Anh (em gái)</span><span class="badge" style="background:var(--sand);color:var(--charcoal);border-color:var(--border);margin-left:auto;font-size:11px;">FREE</span></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:12px;">+ Thêm hồ sơ mới</button>
+        </div>
+        <div class="card" style="margin-bottom:24px;"><h4 style="margin-bottom:12px;">Đổi mật khẩu</h4><button class="btn btn-ghost btn-sm">Đổi mật khẩu</button></div>
+        <div class="card" style="border-color:var(--error);background:var(--error-bg);"><h4 style="color:var(--error);margin-bottom:12px;">Vùng nguy hiểm</h4><button class="btn" style="background:transparent;color:var(--error);border:1px solid var(--error);padding:8px 16px;font-size:13px;border-radius:var(--radius-md);cursor:pointer;">Xóa tài khoản</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     S9 — TIME ORACLE (PRO — ALL LAYERS)
+     ═══════════════════════════════════════════ -->
+<div id="s9" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar"><div class="sidebar-logo">360Human</div><ul class="sidebar-nav">
+      <li onclick="showScreen('s4')">◉ Dashboard</li><li class="active">◷ Time Oracle</li>
+      <li onclick="showScreen('s10')">△ Actions</li><li onclick="showScreen('s8')">⚙ Cài đặt</li>
+    </ul></nav>
+    <div class="app-main">
+      <div class="topbar"><div class="topbar-left"><span style="font-weight:500;">Thảo Nguyễn</span><span class="badge badge-pro">PRO</span></div></div>
+      <div style="padding:32px 48px;">
+        <!-- Breadcrumb -->
+        <div style="margin-bottom:24px;font-size:14px;display:flex;gap:8px;align-items:center;">
+          <a href="#" style="color:var(--gold);" onclick="showLayer(1)">Cuộc đời</a><span class="muted">›</span>
+          <a href="#" style="color:var(--gold);" onclick="showLayer(2)">2024-2033</a><span class="muted">›</span>
+          <a href="#" style="color:var(--gold);" onclick="showLayer(2)">2026</a><span class="muted">›</span>
+          <strong>Tháng 3</strong>
+        </div>
+
+        <!-- LAYER 1: Lifetime -->
+        <div id="layer1" class="card" style="margin-bottom:24px;cursor:pointer;" onclick="showLayer(2)">
+          <h3 style="margin-bottom:16px;">Giai đoạn cuộc đời</h3>
+          <div style="display:flex;align-items:center;gap:4px;margin-bottom:16px;">
+            <div style="flex:1;height:8px;background:var(--sand);border-radius:4px;"></div>
+            <div style="flex:1;height:8px;background:var(--sand);border-radius:4px;"></div>
+            <div style="flex:1.5;height:12px;background:var(--gold);border-radius:4px;box-shadow:0 0 12px rgba(184,134,11,0.3);"></div>
+            <div style="flex:1;height:8px;background:var(--sand);border-radius:4px;"></div>
+            <div style="flex:1;height:8px;background:var(--sand);border-radius:4px;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--stone);margin-bottom:16px;">
+            <span>2004-2013</span><span>2014-2023</span><span style="color:var(--gold);font-weight:600;">2024-2033 ●</span><span>2034-2043</span><span>2044-2053</span>
+          </div>
+          <div style="display:flex;gap:24px;">
+            <div style="flex:1;">
+              <p style="font-family:var(--font-heading);font-style:italic;font-size:16px;color:var(--charcoal);margin-bottom:8px;">"Giai đoạn xây dựng nền tảng sự nghiệp và định hình bản sắc cá nhân"</p>
+              <p class="muted" style="font-size:13px;">Câu hỏi suy ngẫm: Bạn đang xây nền cho 10 năm tới — nền đó đủ vững chưa?</p>
+            </div>
+          </div>
+          <div class="source" style="margin-top:12px;">nguồn: Tử Vi (Đại Vận), Số học (Personal Year)</div>
+        </div>
+
+        <!-- LAYER 2: Yearly -->
+        <div id="layer2" class="card" style="margin-bottom:24px;">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+            <span style="cursor:pointer;color:var(--stone);">← 2025</span>
+            <h2>2026</h2>
+            <span style="cursor:pointer;color:var(--stone);">2027 →</span>
+          </div>
+          <div style="background:var(--sand);padding:16px;border-radius:var(--radius-sm);margin-bottom:16px;">
+            <p style="font-size:15px;"><strong>Năm số 9</strong> — Năm hoàn thành chu kỳ. Kết thúc những gì đã bắt đầu, chuẩn bị cho khởi đầu mới.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;opacity:0.6;"><strong style="font-size:13px;">T1</strong><br><span style="font-size:11px;" class="muted">Khởi đầu</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;opacity:0.6;"><strong style="font-size:13px;">T2</strong><br><span style="font-size:11px;" class="muted">Nội tâm</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;border:2px solid var(--gold);background:var(--gold-bg);"><strong style="font-size:13px;color:var(--gold);">T3 ●</strong><br><span style="font-size:11px;">Tập trung</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;"><strong style="font-size:13px;">T4</strong><br><span style="font-size:11px;" class="muted">Hành động</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;"><strong style="font-size:13px;">T5</strong><br><span style="font-size:11px;" class="muted">Giao tiếp</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;background:var(--ember-bg);"><strong style="font-size:13px;color:var(--ember);">T6</strong><br><span style="font-size:11px;color:var(--ember);">Cẩn trọng</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;"><strong style="font-size:13px;">T7</strong><br><span style="font-size:11px;" class="muted">Nghỉ ngơi</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;"><strong style="font-size:13px;">T8</strong><br><span style="font-size:11px;" class="muted">Phát triển</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;background:var(--sage-bg);"><strong style="font-size:13px;color:var(--sage);">T9</strong><br><span style="font-size:11px;color:var(--sage);">Thuận lợi</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;"><strong style="font-size:13px;">T10</strong><br><span style="font-size:11px;" class="muted">Ổn định</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;"><strong style="font-size:13px;">T11</strong><br><span style="font-size:11px;" class="muted">Chuẩn bị</span></div>
+            <div class="card" style="padding:12px;text-align:center;cursor:pointer;background:var(--sage-bg);"><strong style="font-size:13px;color:var(--sage);">T12</strong><br><span style="font-size:11px;color:var(--sage);">Hoàn thành</span></div>
+          </div>
+        </div>
+
+        <!-- LAYER 3: Monthly + Calendar -->
+        <div style="display:flex;gap:32px;" class="two-col">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+              <span style="cursor:pointer;color:var(--stone);">←</span><h2>Tháng 3, 2026</h2><span style="cursor:pointer;color:var(--stone);">→</span>
+            </div>
+            <div class="card">
+              <h3 style="margin-bottom:12px;">Tháng của sự tập trung nội tâm</h3>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;justify-content:space-between;"><span class="muted">Năng lượng</span><span style="color:var(--gold);">●●●●○</span></div>
+                <div style="display:flex;justify-content:space-between;"><span class="muted">Trọng tâm</span><span>Sự nghiệp</span></div>
+                <div style="display:flex;justify-content:space-between;"><span class="muted">Thuận lợi</span><span style="color:var(--sage);">Tuần 1, Tuần 4</span></div>
+                <div style="display:flex;justify-content:space-between;"><span class="muted">Lưu ý</span><span style="color:var(--ember);">Tuần 3</span></div>
+              </div>
+              <div class="source" style="margin-top:12px;">nguồn: Số học (Personal Month 3), Tử Vi (Lưu Niên)</div>
+            </div>
+          </div>
+          <div style="flex:1.5;">
+            <table style="width:100%;border-collapse:separate;border-spacing:0 4px;text-align:center;font-size:14px;">
+              <thead><tr style="color:var(--stone);font-size:12px;"><td style="padding:8px;">T2</td><td>T3</td><td>T4</td><td>T5</td><td>T6</td><td>T7</td><td>CN</td></tr></thead>
+              <tbody>
+                <tr style="background:var(--sage-bg);border-radius:8px;cursor:pointer;" onclick="showWeek(this,'01/03 — 02/03','Tuần khởi đầu tháng — năng lượng tích cực, thuận lợi cho lên kế hoạch.','Kế hoạch · Khởi đầu')"><td></td><td></td><td></td><td></td><td></td><td style="padding:10px;">1</td><td style="padding:10px;">2</td></tr>
+                <tr style="background:var(--sage-bg);cursor:pointer;" onclick="showWeek(this,'03/03 — 09/03','Năng lượng cao, phù hợp hành động và ra quyết định. Tận dụng momentum.','Hành động · Quyết định')"><td style="padding:10px;">3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
+                <tr style="background:var(--ember-bg);cursor:pointer;" onclick="showWeek(this,'10/03 — 16/03','Tuần cẩn trọng trong giao tiếp. Năng lượng hướng nội — tốt cho suy ngẫm.','Nội tâm · Giao tiếp')"><td style="padding:10px;">10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td></tr>
+                <tr style="cursor:pointer;" onclick="showWeek(this,'17/03 — 23/03','Tuần chuyển tiếp — năng lượng ổn định, không có sự kiện lớn.','Ổn định · Chuẩn bị')"><td style="padding:10px;font-weight:600;color:var(--gold);">17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td></tr>
+                <tr style="background:var(--sage-bg);cursor:pointer;" onclick="showWeek(this,'24/03 — 30/03','Tuần kết thúc tháng — thuận lợi, năng lượng tăng trở lại. Tốt cho hoàn thành việc.','Hoàn thành · Thu hoạch')"><td style="padding:10px;">24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td></tr>
+              </tbody>
+            </table>
+            <div id="week-panel" class="card" style="margin-top:16px;">
+              <div class="source" style="margin-bottom:8px;">Tuần 17/03 — 23/03/2026</div>
+              <p style="font-size:15px;margin-bottom:8px;">Tuần chuyển tiếp — năng lượng ổn định, không có sự kiện lớn. Phù hợp để review và chuẩn bị cho tuần cuối tháng.</p>
+              <div style="display:flex;gap:6px;"><span class="badge-system">Ổn định</span><span class="badge-system">Chuẩn bị</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     S10 — ACTIONS (PRO — ALL 3 LAYERS)
+     ═══════════════════════════════════════════ -->
+<div id="s10" class="screen">
+  <div class="app-layout">
+    <nav class="sidebar"><div class="sidebar-logo">360Human</div><ul class="sidebar-nav">
+      <li onclick="showScreen('s4')">◉ Dashboard</li><li onclick="showScreen('s9')">◷ Time Oracle</li>
+      <li class="active">△ Actions</li><li onclick="showScreen('s8')">⚙ Cài đặt</li>
+    </ul></nav>
+    <div class="app-main">
+      <div class="topbar"><div class="topbar-left"><span style="font-weight:500;">Thảo Nguyễn</span><span class="badge badge-pro">PRO</span></div></div>
+      <div style="display:flex;gap:0;" class="two-col">
+        <!-- LEFT: Pyramid + Actions -->
+        <div style="flex:1;padding:32px 32px 32px 48px;border-right:1px solid var(--border);">
+          <div style="text-align:center;margin-bottom:32px;">
+            <svg viewBox="0 0 300 200" style="width:280px;" id="pyramid-svg">
+              <polygon points="150,20 260,180 40,180" fill="none" stroke="var(--border)" stroke-width="2"/>
+              <line x1="90" y1="120" x2="210" y2="120" stroke="var(--border)" stroke-width="1"/>
+              <line x1="115" y1="70" x2="185" y2="70" stroke="var(--border)" stroke-width="1"/>
+              <!-- Khai Phóng -->
+              <polygon id="py-3" points="150,20 185,70 115,70" fill="transparent" stroke="transparent" stroke-width="2" style="cursor:pointer;" onclick="selectLayer(3)"/>
+              <text x="150" y="55" text-anchor="middle" style="font-size:11px;fill:var(--stone);font-family:var(--font-body);cursor:pointer;" onclick="selectLayer(3)">Khai Phóng</text>
+              <!-- Nuôi Dưỡng -->
+              <polygon id="py-2" points="115,70 185,70 210,120 90,120" fill="transparent" stroke="transparent" stroke-width="2" style="cursor:pointer;" onclick="selectLayer(2)"/>
+              <text x="150" y="105" text-anchor="middle" style="font-size:11px;fill:var(--stone);font-family:var(--font-body);cursor:pointer;" onclick="selectLayer(2)">Nuôi Dưỡng</text>
+              <!-- Nền Móng -->
+              <polygon id="py-1" points="90,120 210,120 260,180 40,180" fill="var(--gold-bg)" fill-opacity="0.5" stroke="var(--gold)" stroke-width="2" style="cursor:pointer;" onclick="selectLayer(1)"/>
+              <text x="150" y="160" text-anchor="middle" style="font-size:12px;fill:var(--gold);font-family:var(--font-body);font-weight:600;cursor:pointer;" onclick="selectLayer(1)">Nền Móng</text>
+            </svg>
+          </div>
+          <div id="layer-title" style="margin-bottom:4px;"></div>
+          <div class="progress-bar" style="margin-bottom:24px;width:150px;" id="action-progress-bar"><div class="fill" style="width:0%"></div></div>
+          <div id="action-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
+        <!-- RIGHT: WHAT & WHY -->
+        <div style="flex:1;padding:32px 48px 32px 32px;" id="whatwhy-panel">
+          <div class="card" style="margin-bottom:16px;"><h4 style="margin-bottom:12px;color:var(--stone);">WHAT — Xuất phát từ đặc điểm nào?</h4><p id="what-text" style="font-size:15px;line-height:1.8;"></p></div>
+          <div class="card"><h4 style="margin-bottom:12px;color:var(--stone);">WHY — Từ hệ thống nào?</h4><div id="why-badge" style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"></div><p id="why-text" style="font-size:15px;line-height:1.8;"></p>
+            <a href="#" style="font-size:13px;color:var(--gold);margin-top:12px;display:inline-block;" onclick="showScreen('s5')">Xem chi tiết trong biểu đồ →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEV NAV -->
+<div class="dev-nav">
+  <button class="active" onclick="showScreen('s1')">S1 Landing</button>
+  <button onclick="showScreen('s2')">S2 Auth</button>
+  <button onclick="showScreen('s3')">S3 Onboard</button>
+  <button onclick="showScreen('s4')">S4 Dashboard</button>
+  <button onclick="showScreen('s5')">S5 System</button>
+  <button onclick="showScreen('s7')">S7 Pricing</button>
+  <button onclick="showScreen('s8')">S8 Profile</button>
+  <button onclick="showScreen('s9')">S9 Oracle</button>
+  <button onclick="showScreen('s10')">S10 Actions</button>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════ DATA ═══════════════════════════════════════════ */
+const TOPICS = [
+  {id:1, title:"Tổng quan bản thân", reading:"Bạn là người mang năng lượng của sự chuyển hóa. Bên ngoài, bạn giữ vẻ điềm tĩnh — nhưng bên trong, bạn luôn đang xử lý, phân tích, và tìm cách làm mọi thứ tốt hơn.\n\nSự kết hợp giữa Canh Kim và lửa đôi Ngọ tạo nên một mâu thuẫn nội tại thú vị: bản chất cứng rắn nhưng môi trường đòi hỏi sự linh hoạt. Đây không phải nhược điểm — đây là lợi thế nếu bạn biết cách sử dụng.", source:"BaZi (Canh Kim Nhật Chủ), Tử Vi (Tham Lang miếu địa)", actions:[
+    {title:"Dành 10 phút mỗi sáng viết nhật ký", desc:"Quan sát mâu thuẫn nội tại — viết ra, không phán xét", sys:"BaZi"},
+    {title:"Nói \"không\" ít nhất 1 lần/tuần", desc:"Tham Lang miếu địa dễ thu hút — nhưng cần chọn lọc", sys:"Tử Vi"}
+  ]},
+  {id:2, title:"Sứ mệnh & mục đích sống", reading:"Bạn sinh ra để kết nối những thứ tưởng chừng không liên quan, và biến chúng thành hệ thống có ý nghĩa. Mission 7 kép (ngày 6 tháng 6) cho thấy sứ mệnh của bạn xoay quanh việc tìm kiếm chiều sâu — không phải bề rộng.\n\nHuman Design MG 1/3 xác nhận: bạn là người thử nghiệm và xây dựng nền tảng. Profile 1 = nghiên cứu kỹ trước khi hành động. Line 3 = học từ trải nghiệm thực tế.", source:"Số học (Mission 7), Human Design (MG 1/3)", actions:[
+    {title:"Chọn 1 lĩnh vực đi sâu trong 6 tháng tới", desc:"Mission 7 = chiều sâu. Dừng việc dàn trải", sys:"Số học"},
+    {title:"Ghi lại 3 bài học từ mỗi thất bại", desc:"MG 1/3 học tốt nhất từ trial & error — nhưng phải ghi lại", sys:"HD"}
+  ]},
+  {id:3, title:"Tình cảm & các mối quan hệ", reading:"Thiên Yết Trăng cho bạn chiều sâu cảm xúc hiếm có. Bạn yêu mãnh liệt, ghen tuông sâu, và nhớ mọi thứ. Trong tình cảm, bạn tìm kiếm sự thấu hiểu toàn diện — không chấp nhận mối quan hệ bề mặt.\n\nAtmakaraka Mặt Trăng (Vedic) xác nhận: bài học karma lớn nhất của bạn liên quan đến cảm xúc và sự nuôi dưỡng. Bạn cần học cách cho đi mà không kỳ vọng nhận lại.", source:"Vedic (Atmakaraka Moon), Tử Vi (Thiên Yết Trăng)", actions:[
+    {title:"Viết \"thư không gửi\" khi tức giận", desc:"Thiên Yết giữ cảm xúc — viết ra để giải phóng, không để nổ", sys:"Vedic"},
+    {title:"Hỏi 1 câu sâu thay vì small talk", desc:"Tham Lang muốn kết nối thật — tập hỏi câu có chiều sâu", sys:"Tử Vi"}
+  ]},
+  {id:4, title:"Sự nghiệp & nghề nghiệp", reading:"Thất Sát đắc địa tại Tài Bạch cung = năng lực kiếm tiền mạnh, nhưng theo cách \"chiến đấu\" — không phải ngồi yên chờ. Bạn phù hợp với môi trường có áp lực, có thách thức, có cạnh tranh.\n\nCareer paths phù hợp: tư vấn chiến lược, quản lý dự án, khởi nghiệp, nghiên cứu chuyên sâu. Tránh: công việc lặp lại, môi trường quá ổn định.", source:"Tử Vi (Thất Sát đắc địa), BaZi (Thiên Ấn)", actions:[
+    {title:"Tìm 1 mentor trong ngành mục tiêu", desc:"Thất Sát cần hướng dẫn — không phải vì yếu mà vì năng lượng quá mạnh cần định hướng", sys:"Tử Vi"},
+    {title:"Mỗi quý, đánh giá: tôi có đang được thách thức?", desc:"Canh Kim cần lửa để rèn — nếu thoải mái quá, bạn đang trì trệ", sys:"BaZi"}
+  ]},
+  {id:5, title:"Tài chính & tiền bạc", reading:"LP 6 kép (ngày 6 tháng 6) = bạn có khả năng tạo sự ổn định tài chính, nhưng cần hệ thống. Tiền đến với bạn qua trách nhiệm và phục vụ — không phải qua may mắn.\n\nThất Sát tại Tài Bạch = kiếm tiền qua nỗ lực, cạnh tranh. Tiền của bạn là tiền \"chiến đấu\" — earned, not given.", source:"Số học (LP 6), Tử Vi (Thất Sát tại Tài Bạch)", actions:[
+    {title:"Tạo budget cá nhân theo quy tắc 50/30/20", desc:"LP 6 = hệ thống. Không có hệ thống = tiền vào rồi ra", sys:"Số học"},
+    {title:"Đầu tư vào kỹ năng trước khi đầu tư tài chính", desc:"Thất Sát kiếm tiền bằng năng lực — nâng cấp năng lực = nâng cấp thu nhập", sys:"Tử Vi"}
+  ]},
+  {id:6, title:"Sức khỏe & năng lượng", reading:"Sacral Center defined (Human Design) = bạn có nguồn năng lượng bền bỉ, nhưng cần ngủ đủ giấc để reset. MG không nên ép mình làm việc khi không có \"phản hồi\" từ cơ thể.\n\nNgọ kép (lửa đôi) = dễ burn out nếu không nghỉ ngơi đúng lúc. Dấu hiệu cần chú ý: mất ngủ, đau đầu, nóng trong.", source:"Human Design (Sacral Center), BaZi (Ngọ kép)", actions:[
+    {title:"Ngủ trước 23h ít nhất 5 ngày/tuần", desc:"MG cần reset Sacral qua giấc ngủ — không phải caffeine", sys:"HD"},
+    {title:"Tập 20 phút cardio mỗi ngày", desc:"Ngọ kép = lửa thừa. Cần kênh giải phóng — vận động là cách tốt nhất", sys:"BaZi"}
+  ]},
+  {id:7, title:"Gia đình & nguồn gốc", reading:"Xử Nữ Mọc (Vedic) = cách bạn xuất hiện với thế giới: tỉ mỉ, phân tích, hay lo lắng. Điều này ảnh hưởng mạnh đến dynamic gia đình — bạn thường là người \"giải quyết vấn đề\" trong nhà.\n\nBạch Lạp Kim (BaZi) = vàng trong nến — giá trị ẩn bên trong, không phô trương. Gia đình có thể không nhìn thấy giá trị thật của bạn.", source:"Vedic (Xử Nữ Mọc), BaZi (Bạch Lạp Kim)", actions:[
+    {title:"Nói ra 1 điều bạn cần từ gia đình", desc:"Bạch Lạp Kim giấu nhu cầu — nhưng gia đình cần nghe để hiểu", sys:"BaZi"}
+  ]},
+  {id:8, title:"Điểm mạnh & tài năng", reading:"Tham Lang miếu địa = sức hút tự nhiên mạnh nhất trong 14 chính tinh. Bạn thu hút người, cơ hội, và tài nguyên một cách tự nhiên — vấn đề là chọn lọc.\n\nSoul 7 (Số học) = trực giác sâu. Bạn \"biết\" trước khi hiểu — cảm nhận patterns mà người khác không thấy.", source:"Tử Vi (Tham Lang miếu), Số học (Soul 7)", actions:[
+    {title:"Dùng sức hút có chủ đích — chọn 3 người/dự án quan trọng nhất", desc:"Tham Lang phân tán nếu không chọn lọc — giới hạn = tập trung = hiệu quả", sys:"Tử Vi"},
+    {title:"Tin trực giác đầu tiên, verify sau", desc:"Soul 7 đúng 80% ở lần cảm nhận đầu — nhưng verify bằng data", sys:"Số học"}
+  ]},
+  {id:9, title:"Thách thức & bóng tối", reading:"Tham Lang miếu địa có shadow: tham lam năng lượng, muốn mọi thứ, khó từ chối. Kết hợp với Ngọ kép (lửa đôi) = dễ cháy hết pin vì nhận quá nhiều.\n\nKetu ở vị trí quan trọng (Vedic) = bạn có xu hướng buông bỏ những thứ thực ra cần giữ, và giữ những thứ nên buông.", source:"Tử Vi (Tham Lang shadow), Vedic (Ketu)", actions:[
+    {title:"Mỗi tháng, review: tôi đang giữ gì nên buông?", desc:"Ketu = detachment không đúng chỗ. Cần review có ý thức", sys:"Vedic"},
+    {title:"Set giới hạn: tối đa 3 projects cùng lúc", desc:"Tham Lang + MG response = nhận hết. Cap lại để không burn out", sys:"Tử Vi"}
+  ]},
+  {id:10, title:"Thời điểm & chu kỳ", reading:"2024-2033 là Đại Vận quan trọng nhất — giai đoạn xây dựng nền tảng sự nghiệp. Năm 2026 (Personal Year 9) = năm hoàn thành chu kỳ, kết thúc giai đoạn cũ.\n\nTháng 3/2026 = Personal Month 3 = tháng sáng tạo và biểu đạt. Năng lượng hướng ngoại, phù hợp networking và trình bày ý tưởng.", source:"Tử Vi (Đại Vận 2024-2033), Số học (PY9, PM3)", actions:[
+    {title:"Trước tháng 12/2026: hoàn thành 1 dự án quan trọng", desc:"PY9 = năm kết thúc. Nếu không hoàn thành, nó sẽ kéo sang chu kỳ mới", sys:"Số học"}
+  ]}
+];
+
+const SYSTEMS = [
+  {id:'tu-vi', name:'Tử Vi', chart:'Lá số Tử Vi', desc:'Tham Lang miếu địa tại Cung Mệnh — ngôi sao của sức hút và đa tài ở vị trí mạnh nhất. Thất Sát đắc địa tại Tài Bạch — năng lực kiếm tiền qua chiến đấu và nỗ lực.'},
+  {id:'bazi', name:'BaZi', chart:'Tứ Trụ — Bát Tự', desc:'Canh Kim Nhật Chủ trong lửa đôi Ngọ. Kim gặp lửa = bị tôi luyện liên tục. Bạch Lạp Kim (nạp âm) = vàng ẩn trong nến, giá trị không phô trương.'},
+  {id:'hd', name:'Human Design', chart:'Body Graph', desc:'Manifesting Generator 1/3. Sacral Center defined = năng lượng bền bỉ. Strategy: respond, not initiate. Authority: Sacral — nghe cơ thể, không nghe đầu.'},
+  {id:'numerology', name:'Số học', chart:'Biểu đồ số', desc:'Life Path 6 kép (ngày 6 tháng 6). Mission 7 + Soul 7 = double 7 — trực giác và chiều sâu là trung tâm. Personal Year 2026 = 9 (hoàn thành chu kỳ).'},
+  {id:'vedic', name:'Vedic', chart:'Rashi Chart', desc:'Atmakaraka Mặt Trăng — bài học karma liên quan cảm xúc. Anuradha Nakshatra. Xử Nữ Mọc (Ascendant). Thiên Yết Trăng — chiều sâu cảm xúc mãnh liệt.'}
+];
+
+const ACTIONS_DATA = {
+  1: {name:'Nền Móng', actions:[
+    {title:'Dành 10 phút mỗi sáng viết nhật ký', desc:'Quan sát mâu thuẫn nội tại', sys:'BaZi', what:'Canh Kim Nhật Chủ trong lửa đôi Ngọ — bản chất cứng rắn nhưng môi trường đòi hỏi linh hoạt. Viết nhật ký giúp quan sát sự mâu thuẫn này.', why:'Canh Kim là kim loại cứng — thanh kiếm, búa rìu. Ngọ là lửa mạnh. Kim gặp lửa = bị tôi luyện. Nhật ký là cách tự tôi luyện có ý thức.', whySys:'BaZi — Tứ Trụ · Nhật Chủ'},
+    {title:'Nói "không" ít nhất 1 lần/tuần', desc:'Tham Lang dễ thu hút — cần chọn lọc', sys:'Tử Vi', what:'Tham Lang miếu địa = sức hút tự nhiên mạnh. Nhiều cơ hội đến = khó chọn lọc. Nói "không" là kỹ năng nền tảng.', why:'Tham Lang ở miếu địa thu hút mọi thứ. Không chọn lọc = phân tán. Mỗi "không" = tập trung cho 1 "có" quan trọng.', whySys:'Tử Vi — Cung Mệnh · Tham Lang'},
+    {title:'Ngủ trước 23h, 5 ngày/tuần', desc:'MG cần reset Sacral qua giấc ngủ', sys:'HD', what:'Sacral Center defined cho năng lượng bền bỉ nhưng cần reset hàng ngày. Không ngủ đủ = Sacral không recharge = burn out.', why:'MG 1/3 có năng lượng motor kép (Sacral + chưa xác định). Khi không reset đúng cách, cơ thể gửi tín hiệu sai.', whySys:'Human Design — Sacral Center'},
+    {title:'Tạo budget 50/30/20', desc:'LP 6 = cần hệ thống tài chính', sys:'Số học', what:'Life Path 6 kép = trách nhiệm và hệ thống. Tiền đến qua phục vụ, nhưng cần framework để giữ.', why:'Số 6 là số của trách nhiệm và cân bằng. Không có hệ thống = mất cân bằng = stress tài chính.', whySys:'Số học — Life Path 6'}
+  ]},
+  2: {name:'Nuôi Dưỡng', actions:[
+    {title:'Chọn 1 lĩnh vực đi sâu 6 tháng', desc:'Mission 7 = chiều sâu, không dàn trải', sys:'Số học', what:'Mission 7 + Soul 7 = double 7. Bạn được thiết kế để đi sâu, không rộng. Dàn trải = lãng phí tài năng trực giác.', why:'Số 7 là số của chiều sâu, nghiên cứu, trực giác. Double 7 = mandate từ vũ trụ: hãy chuyên sâu.', whySys:'Số học — Mission 7 · Soul 7'},
+    {title:'Tìm 1 mentor trong ngành', desc:'Thất Sát cần định hướng năng lượng', sys:'Tử Vi', what:'Thất Sát đắc địa = năng lượng cạnh tranh cực mạnh. Không có hướng dẫn = năng lượng phá hoại thay vì xây dựng.', why:'Thất Sát là tướng quân — mạnh nhất khi có chiến lược rõ ràng. Mentor = người cho chiến lược.', whySys:'Tử Vi — Tài Bạch · Thất Sát'},
+    {title:'Tin trực giác đầu, verify bằng data', desc:'Soul 7 đúng 80% lần đầu', sys:'Số học', what:'Soul 7 cho trực giác sâu. Bạn "biết" trước khi hiểu. Nhưng cần verify để tránh confirmation bias.', why:'Soul number 7 = inner wisdom. Kết hợp với Line 1 (HD) = nghiên cứu verify sau khi trực giác đã chỉ hướng.', whySys:'Số học — Soul Urge 7'}
+  ]},
+  3: {name:'Khai Phóng', actions:[
+    {title:'Dùng sức hút có chủ đích — chọn 3 người/dự án', desc:'Tham Lang phân tán nếu không chọn lọc', sys:'Tử Vi', what:'Tham Lang miếu địa = magnet. Nhưng magnet hút mọi thứ — cả rác. Chọn 3 = filter chiến lược.', why:'Tham Lang miếu địa tại Cung Mệnh = vị trí mạnh nhất. Sức hút này là vũ khí — nhưng cần dùng có mục đích.', whySys:'Tử Vi — Cung Mệnh · Tham Lang miếu'},
+    {title:'Hoàn thành 1 dự án quan trọng trước T12/2026', desc:'PY9 = năm kết thúc chu kỳ', sys:'Số học', what:'Personal Year 9 = năm cuối chu kỳ 9 năm. Điều gì chưa hoàn thành sẽ bị kéo sang chu kỳ mới — nặng hơn.', why:'Số 9 = completion. 2027 = PY1 = khởi đầu mới. Bạn cần "dọn bàn" trước khi bàn mới được set.', whySys:'Số học — Personal Year 9'},
+    {title:'Ghi lại 3 bài học từ mỗi thất bại', desc:'MG 1/3 học tốt nhất từ trial & error', sys:'HD', what:'Profile 1/3 = Investigator/Martyr. Line 3 học qua trải nghiệm — thất bại là dữ liệu, không phải thất bại.', why:'Line 3 trong Human Design không có cách nào tránh "thử và sai". Nhưng ghi lại biến sai thành tài sản.', whySys:'Human Design — Profile 1/3'}
+  ]}
+};
+
+/* ═══════════════════════════════════════════ NAVIGATION ═══════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.dev-nav button').forEach(b => {
+    b.classList.remove('active');
+    if (b.textContent.includes(id.toUpperCase().replace('S',''))) b.classList.add('active');
+  });
+  window.scrollTo(0,0);
+  if (id === 's4') initDashboard();
+  if (id === 's5') initS5();
+  if (id === 's10') selectLayer(1);
+}
+
+/* ═══════════════════════════════════════════ S3 ONBOARDING ═══════════════════════════════════════════ */
+function upProg() { const f=document.querySelectorAll('#s3-form input'); let c=0; f.forEach(i=>{if(i.value.trim())c++;}); document.getElementById('ob-prog').style.width=Math.min(100,(c/5)*100)+'%'; }
+function selGender(btn) { btn.parentElement.querySelectorAll('.btn').forEach(b=>{b.classList.remove('btn-gold');b.classList.add('btn-ghost');}); btn.classList.remove('btn-ghost');btn.classList.add('btn-gold'); upProg(); }
+function startLoading() {
+  document.getElementById('s3-form').style.opacity='0';
+  setTimeout(()=>{
+    document.getElementById('s3-form').style.display='none';
+    const ov=document.getElementById('s3-loading'); ov.style.display='flex';
+    const sys=['Số học','BaZi','Tử Vi','Vedic','Human Design'], ctn=document.getElementById('load-layers'); ctn.innerHTML='';
+    sys.forEach((n,i)=>{
+      const el=document.createElement('div');
+      el.style.cssText='display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:var(--sand);transition:all 0.5s;';
+      el.innerHTML=`<span style="font-size:20px;opacity:0.3;">◇</span><span style="color:var(--stone);">${n}</span><div style="flex:1;"><div class="progress-bar"><div class="fill" style="width:0%"></div></div></div>`;
+      ctn.appendChild(el);
+      setTimeout(()=>{el.style.background='var(--gold-bg)';el.querySelector('.fill').style.width='100%';el.querySelector('span').style.opacity='1';el.querySelector('span').style.color='var(--gold)';el.querySelectorAll('span')[1].style.color='var(--ink)';el.querySelectorAll('span')[1].style.fontWeight='500';
+        document.getElementById('load-status').textContent=`${i+1}/5 hệ thống hoàn tất`;
+      },(i+1)*700);
+    });
+    setTimeout(()=>{ov.style.display='none';document.getElementById('s3-form').style.display='flex';document.getElementById('s3-form').style.opacity='1';showScreen('s4');},4500);
+  },500);
+}
+
+/* ═══════════════════════════════════════════ S4 DASHBOARD ═══════════════════════════════════════════ */
+let openTopic = 0;
+function initDashboard() {
+  const col=document.getElementById('topics-col');
+  if(col.querySelector('.accordion-item')) return;
+  col.innerHTML='<h2 style="margin-bottom:24px;">Luận giải theo chủ đề</h2>';
+  TOPICS.forEach((t,i)=>{
+    const item=document.createElement('div'); item.className='accordion-item'+(i===0?' open':'');
+    item.innerHTML=`<div class="accordion-header" onclick="toggleTopic(this,${i})"><span>${t.id}. ${t.title}</span><span class="arrow">▾</span></div>
+      <div class="accordion-body"><div class="reading-text" style="margin-bottom:24px;">${t.reading.split('\n\n').map(p=>'<p style="margin-bottom:16px;">'+p+'</p>').join('')}<div class="source">nguồn: ${t.source}</div></div>
+      <div style="border-top:1px solid var(--border);padding-top:16px;"><h4 style="margin-bottom:12px;color:var(--stone);">Hành động</h4><div style="display:flex;flex-direction:column;gap:8px;">${t.actions.map((a,j)=>`<div class="action-card"><div><strong style="font-size:14px;">${j+1}. ${a.title}</strong><br><span class="muted" style="font-size:13px;">${a.desc}</span></div><span class="badge-system">${a.sys}</span></div>`).join('')}</div><a href="#" style="font-size:13px;color:var(--gold);display:block;margin-top:12px;" onclick="showScreen('s10')">Xem toàn bộ hành động →</a></div></div>`;
+    col.appendChild(item);
+  });
+  // Charts
+  const cc=document.getElementById('charts-col'); cc.innerHTML='';
+  SYSTEMS.forEach(s=>{
+    const c=document.createElement('div'); c.className='card'; c.style.cssText='padding:16px;cursor:pointer;';
+    c.innerHTML=`<div class="accordion-header" style="padding:0;" onclick="toggleChart(this)"><div style="display:flex;align-items:center;gap:8px;"><span>◇</span><span>${s.name}</span></div><span class="arrow" style="font-size:12px;">▾</span></div><div class="accordion-body" style="margin-top:12px;"><p style="font-size:14px;line-height:1.7;">${s.desc}</p><div class="source" style="margin-top:8px;">Click "Xem luận giải chi tiết" để đọc thêm</div></div>`;
+    cc.appendChild(c);
+  });
+  updateDashProgress();
+}
+function toggleTopic(hdr,idx) {
+  const items=hdr.closest('#topics-col').querySelectorAll('.accordion-item');
+  const wasOpen=hdr.parentElement.classList.contains('open');
+  items.forEach(i=>i.classList.remove('open'));
+  if(!wasOpen){hdr.parentElement.classList.add('open');openTopic=idx;}
+  updateDashProgress();
+}
+function toggleChart(hdr) { hdr.closest('.card').querySelector('.accordion-body').style.display=hdr.closest('.card').querySelector('.accordion-body').style.display==='block'?'none':'block'; }
+function updateDashProgress() { const opened=document.querySelectorAll('#topics-col .accordion-item.open').length; const total=TOPICS.length; document.getElementById('dash-progress').style.width=((openTopic+1)/total*100)+'%'; document.getElementById('dash-count').textContent=`${openTopic+1}/${total} chủ đề`; }
+function askQA() { const input=document.getElementById('qa-input'); if(!input.value.trim())return; const resp=document.getElementById('qa-response');
+  resp.innerHTML=`<div class="card" style="margin-bottom:8px;"><p class="muted" style="font-size:13px;margin-bottom:8px;">Bạn hỏi: "${input.value}"</p><div class="reading-text" style="font-size:15px;"><p>Dựa trên biểu đồ của bạn, câu trả lời liên quan đến ${TOPICS[openTopic].title}. Canh Kim Nhật Chủ kết hợp Tham Lang miếu địa cho thấy bạn cần tập trung vào chất lượng thay vì số lượng...</p></div><div class="source" style="margin-top:8px;">nguồn: BaZi, Tử Vi</div></div>`; input.value=''; }
+
+/* ═══════════════════════════════════════════ S5 SYSTEM READING ═══════════════════════════════════════════ */
+let currentSystem = 0;
+function initS5() {
+  const tabs=document.getElementById('system-tabs'); tabs.innerHTML='';
+  SYSTEMS.forEach((s,i)=>{
+    const t=document.createElement('div'); t.className='tab'+(i===0?' active':'');
+    t.textContent=s.name; t.onclick=()=>switchSystem(i); tabs.appendChild(t);
+  });
+  switchSystem(0);
+}
+function switchSystem(idx) {
+  currentSystem=idx; const s=SYSTEMS[idx];
+  document.getElementById('s5-system-name').textContent=s.name;
+  document.getElementById('s5-chart-title').textContent=s.chart;
+  document.getElementById('s5-qa-label').textContent=s.name;
+  document.getElementById('s5-reading').innerHTML=`<h3 style="margin-bottom:16px;">${s.name}</h3><p style="margin-bottom:16px;">${s.desc}</p><div class="source">nguồn: ${s.name}</div>`;
+  document.querySelectorAll('#system-tabs .tab').forEach((t,i)=>{t.classList.toggle('active',i===idx);});
+  document.getElementById('s5-chart').innerHTML=`<div style="text-align:center;padding:32px;"><p style="font-size:48px;opacity:0.3;">◇</p><p class="muted">${s.chart}</p><p class="source" style="margin-top:8px;">Interactive chart placeholder</p></div>`;
+}
+function s5Mode(el,mode) { el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+
+/* ═══════════════════════════════════════════ S9 TIME ORACLE ═══════════════════════════════════════════ */
+function showLayer(n) { /* scroll to layer */ }
+function showWeek(row,range,text,tags) {
+  row.closest('tbody').querySelectorAll('tr').forEach(r=>r.style.outline='none');
+  row.style.outline='2px solid var(--gold)'; row.style.outlineOffset='-1px';
+  const panel=document.getElementById('week-panel');
+  panel.innerHTML=`<div class="source" style="margin-bottom:8px;">Tuần ${range}</div><p style="font-size:15px;margin-bottom:8px;">${text}</p><div style="display:flex;gap:6px;">${tags.split(' · ').map(t=>`<span class="badge-system">${t}</span>`).join('')}</div>`;
+}
+
+/* ═══════════════════════════════════════════ S10 ACTIONS ═══════════════════════════════════════════ */
+function selectLayer(n) {
+  const data=ACTIONS_DATA[n]; if(!data)return;
+  // Pyramid highlight
+  [1,2,3].forEach(i=>{
+    const py=document.getElementById('py-'+i);
+    if(i===n){py.setAttribute('fill','rgba(245,236,212,0.5)');py.setAttribute('stroke','var(--gold)');py.setAttribute('stroke-width','2');}
+    else{py.setAttribute('fill','transparent');py.setAttribute('stroke','transparent');}
+  });
+  // Title
+  document.getElementById('layer-title').innerHTML=`<h3>${data.name} — ${data.actions.length} hành động</h3>`;
+  // Actions
+  const list=document.getElementById('action-list'); list.innerHTML='';
+  data.actions.forEach((a,i)=>{
+    const card=document.createElement('div'); card.className='card'; card.style.cssText='cursor:pointer;padding:16px;'+(i===0?'border:2px solid var(--gold);':'');
+    card.innerHTML=`<div style="display:flex;align-items:start;gap:12px;"><input type="checkbox" style="width:auto;margin-top:4px;" onclick="event.stopPropagation()"><div style="flex:1;"><strong>${i+1}. ${a.title}</strong><p class="muted" style="font-size:13px;margin-top:4px;">${a.desc}</p></div><span class="badge-system">${a.sys}</span></div>`;
+    card.onclick=()=>{list.querySelectorAll('.card').forEach(c=>c.style.border='1px solid var(--border)');card.style.border='2px solid var(--gold)';showWhatWhy(a);};
+    list.appendChild(card);
+  });
+  if(data.actions.length) showWhatWhy(data.actions[0]);
+}
+function showWhatWhy(a) {
+  document.getElementById('what-text').textContent=a.what;
+  document.getElementById('why-badge').innerHTML=`<span class="badge-system">${a.sys}</span><span style="font-size:15px;font-weight:500;">${a.whySys}</span>`;
+  document.getElementById('why-text').textContent=a.why;
+}
+</script>
+</body>
+</html>
